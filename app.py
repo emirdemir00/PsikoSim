@@ -182,16 +182,6 @@ else:
     with st.expander("📄 Danışan Klinik Ön Bilgi Dosyası (Okumak İçin Tıklayın)"):
         st.write(vaka_ozet) # Artık hata vermez!
 
-st.divider()
-if secilen_vaka_adi == "Seçiniz...":
-    st.info("👈 Seansa başlamak için sol menüden bir danışan dosyası seçin.")
-else:
-    st.subheader(f"🗣 Danışan: {secilen_vaka_adi}")
-    with st.expander("📄 Danışan Klinik Ön Bilgi Dosyası"):
-        st.write(vaka_ozet)
-
-    st.divider()
-
     if "messages" not in st.session_state or len(st.session_state.messages) == 0:
         st.session_state.messages = [{"role": "system", "content": vaka_kurallar}]
 
