@@ -173,7 +173,7 @@ with st.sidebar:
     st.sidebar.info("**Emir Demir**\nGeliştirici\nYeni Medya ve Yönetim Bİlişim Sistemleri Öğrencisi")
     
     # Ablanın Bilgileri
-    st.sidebar.success("**Ebru Demir**\nVaka Yazarı\Psikoloji Mezunu")
+    st.sidebar.success("**Ebru Demir**\nVaka Yazarı\nPsikoloji Mezunu")
     
     # İletişim & Linkler
     st.sidebar.write("🔗 **Bağlantılar:**")
