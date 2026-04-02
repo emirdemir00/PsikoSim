@@ -68,70 +68,74 @@ with st.sidebar:
     st.title("🗂 Danışan Kütüphanesi")
     
     with st.expander("🛠️ Yetkili Paneli (Gizli)"):
-        girilen_sifre = st.text_input("Uzman Şifresi:", type="password")
+        girilen_sifre = st.text_input("Uzman Şifresi:", type="password", key="admin_sifre")
+        onay_butonu = st.button("Giriş Yap")
         
-        if girilen_sifre == "nisanyagmuru":
-            st.success("Kilit açıldı.")
-            tab1, tab2, tab3 = st.tabs(["➕ Ekle", "🗑️ Sil", "✏️ Düzenle"])
-            
-            with tab1:
-                yeni_vaka_adi = st.text_input("Danışan Adı (Örn: Ayşe - Panik Atak)")
-                yeni_vaka_detayi = st.text_area("Vaka Senaryosu ve AI Kuralları", height=150, key="yeni_vaka_ekle")
+        if onay_butonu or (girilen_sifre == "nisanyagmuru" and girilen_sifre != ""):
+            if girilen_sifre == "nisanyagmuru":
+                st.success("Kilit açıldı.")
+                tab1, tab2, tab3 = st.tabs(["➕ Ekle", "🗑️ Sil", "✏️ Düzenle"])
                 
-                if st.button("Vakayı Sisteme Ekle"):
-                    if yeni_vaka_adi and yeni_vaka_detayi:
-                        with st.spinner("Vaka oluşturuluyor..."):
-                            try:
-                                sistem_istemi = f"Lütfen aşağıdaki metinden sadece danışanın adını, meslek bilgisini ve başvuru nedenini çıkar, 'hasta' kelimesini kullanma:\n\n{yeni_vaka_detayi}"
-                                response = client.chat.completions.create(
-                                    model="gpt-5.4-nano",
-                                    messages=[{"role": "user", "content": sistem_istemi}],
-                                    temperature=0.3
-                                )
-                                klinik_ozet = response.choices[0].message.content
-                                vaka_kaydet_bulut(yeni_vaka_adi, yeni_vaka_detayi, klinik_ozet)
-                                st.success(f"✅ {yeni_vaka_adi} buluta kaydedildi.")
-                                time.sleep(1)
-                                st.rerun()
-                            except:
-                                st.error("Özet oluşturulamadı.")
-
-            with tab2:
-                silinecek_vaka = st.selectbox(
-                    "Silinecek Vaka:", 
-                    options=[v for v in vaka_kutuphanesi.keys() if v != "Seçiniz..."],
-                    key="sil_selectbox"
-                )
-                if st.button("Seçili Vakayı Kalıcı Olarak Sil", type="primary"):
-                    if silinecek_vaka:
-                        vaka_sil_bulut(silinecek_vaka)
-                        st.error(f"🗑️ {silinecek_vaka} silindi.")
-                        time.sleep(1)
-                        st.rerun()
-
-            with tab3:
-                duzenlenecek_ad = st.selectbox("Düzenlenecek Vaka:", options=[v for v in vaka_kutuphanesi.keys() if v != "Seçiniz..."])
-                if duzenlenecek_ad:
-                    eski_kurallar = vaka_kutuphanesi[duzenlenecek_ad]["kurallar"]
-                    yeni_kurallar = st.text_area("Senaryoyu Güncelle:", value=eski_kurallar, height=200, key=f"area_{duzenlenecek_ad}")
-                    c1, c2 = st.columns(2)
-                    with c1:
-                        if st.button("Sadece Metni Kaydet"):
-                            vaka_kaydet_bulut(duzenlenecek_ad, yeni_kurallar, vaka_kutuphanesi[duzenlenecek_ad]["ozet"])
-                            st.success("Güncellendi!")
-                            st.rerun()
-                    with c2:
-                        if st.button("Metni Kaydet ve Özeti Yenile"):
-                            with st.spinner("Yenileniyor..."):
+                with tab1:
+                    yeni_vaka_adi = st.text_input("Danışan Adı (Örn: Ayşe - Panik Atak)")
+                    yeni_vaka_detayi = st.text_area("Vaka Senaryosu ve AI Kuralları", height=150, key="yeni_vaka_ekle")
+                    
+                    if st.button("Vakayı Sisteme Ekle"):
+                        if yeni_vaka_adi and yeni_vaka_detayi:
+                            with st.spinner("Vaka oluşturuluyor..."):
                                 try:
-                                    sistem_istemi = f"Aşağıdaki klinik vakanın sadece adını, meslek bilgisini ve başvuru nedenini çıkar...\n\n{yeni_kurallar}"
-                                    response = client.chat.completions.create(model="gpt-5.4-nano", messages=[{"role": "user", "content": sistem_istemi}], temperature=0.3)
-                                    yeni_ozet = response.choices[0].message.content
-                                    vaka_kaydet_bulut(duzenlenecek_ad, yeni_kurallar, yeni_ozet)
-                                    st.success("Bulut Güncellendi!")
+                                    sistem_istemi = f"Lütfen aşağıdaki metinden sadece danışanın adını, meslek bilgisini ve başvuru nedenini çıkar:\n\n{yeni_vaka_detayi}"
+                                    response = client.chat.completions.create(
+                                        model="gpt-5.4-nano",
+                                        messages=[{"role": "user", "content": sistem_istemi}],
+                                        temperature=0.3
+                                    )
+                                    klinik_ozet = response.choices[0].message.content
+                                    vaka_kaydet_bulut(yeni_vaka_adi, yeni_vaka_detayi, klinik_ozet)
+                                    st.success(f"✅ {yeni_vaka_adi} buluta kaydedildi.")
+                                    time.sleep(1)
                                     st.rerun()
                                 except:
-                                    st.error("Hata!")
+                                    st.error("Özet oluşturulamadı.")
+
+                with tab2:
+                    silinecek_vaka = st.selectbox(
+                        "Silinecek Vaka:", 
+                        options=[v for v in vaka_kutuphanesi.keys() if v != "Seçiniz..."],
+                        key="sil_selectbox"
+                    )
+                    if st.button("Seçili Vakayı Kalıcı Olarak Sil", type="primary"):
+                        if silinecek_vaka:
+                            vaka_sil_bulut(silinecek_vaka)
+                            st.error(f"🗑️ {silinecek_vaka} silindi.")
+                            time.sleep(1)
+                            st.rerun()
+
+                with tab3:
+                    duzenlenecek_ad = st.selectbox("Düzenlenecek Vaka:", options=[v for v in vaka_kutuphanesi.keys() if v != "Seçiniz..."], key="duzen_sb")
+                    if duzenlenecek_ad:
+                        eski_kurallar = vaka_kutuphanesi[duzenlenecek_ad]["kurallar"]
+                        yeni_kurallar = st.text_area("Senaryoyu Güncelle:", value=eski_kurallar, height=200, key=f"area_{duzenlenecek_ad}")
+                        c1, c2 = st.columns(2)
+                        with c1:
+                            if st.button("Sadece Metni Kaydet"):
+                                vaka_kaydet_bulut(duzenlenecek_ad, yeni_kurallar, vaka_kutuphanesi[duzenlenecek_ad]["ozet"])
+                                st.success("Güncellendi!")
+                                st.rerun()
+                        with c2:
+                            if st.button("Metni Kaydet ve Özeti Yenile"):
+                                with st.spinner("Yenileniyor..."):
+                                    try:
+                                        sistem_istemi = f"Aşağıdaki klinik vakanın özetini çıkar...\n\n{yeni_kurallar}"
+                                        response = client.chat.completions.create(model="gpt-5.4-nano", messages=[{"role": "user", "content": sistem_istemi}], temperature=0.3)
+                                        yeni_ozet = response.choices[0].message.content
+                                        vaka_kaydet_bulut(duzenlenecek_ad, yeni_kurallar, yeni_ozet)
+                                        st.success("Bulut Güncellendi!")
+                                        st.rerun()
+                                    except:
+                                        st.error("Hata!")
+            else:
+                st.error("❌ Hatalı Şifre! Lütfen uzman yetkinizi kontrol edin.")
         
         # --- BURASI YENİ EKLENDİ (HİÇBİR YAZI DEĞİŞMEDİ) ---
         elif girilen_sifre != "":
