@@ -47,10 +47,7 @@ def vaka_sil_bulut(ad):
 # Kütüphaneyi buluttan çek
 vaka_kutuphanesi = vakalari_getir()
 
-# ---------------------------------------------
-
-# 3. TASARIM VE SAYFA AYARLARI
-st.set_page_config(page_title="Psiko-Sim Laboratuvarı", page_icon="🧠", layout="wide")
+# ---------------------------------------------)
 
 # ANA EKRAN (BANNER VE AÇIKLAMA)
 st.markdown("""
