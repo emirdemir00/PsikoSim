@@ -179,8 +179,8 @@ with st.sidebar:
     # --- GELİŞTİRİCİ & DANIŞMAN KISMI ---
     st.sidebar.divider()
     st.sidebar.subheader("👨‍💻 Proje Ekibi")
-    st.sidebar.info("**Emir Demir**\nGeliştirici")
-    st.sidebar.success("**Ebru Demir**\nVaka Yazarı")
+    st.sidebar.info("**Emir Demir**\nGeliştirici - Yeni Medya ve Yönetim Bilişim Sistemleri Öğrencisi")
+    st.sidebar.success("**Ebru Demir**\nVaka Yazarı - Psikoloji Mezunu")
 
 # 4. hafıza temizliği
 if "mevcut_vaka" not in st.session_state:
