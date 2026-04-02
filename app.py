@@ -62,7 +62,8 @@ with st.sidebar:
         - AI Tabanlı Danışanlar
         - Dinamik Vaka Yönetimi
         - Otomatik Klinik Raporlama
-        Önemli Not:
+
+Önemli Not:
 Bu uygulamada yer alan tüm vaka örnekleri ve karakterler tamamen kurgusal olup, herhangi
 bir gerçek kişiyle benzerlik göstermesi tesadüfidir. Vaka içerikleri; psikoloji öğrencileri,
 uzmanlar ve ilgili alanlarda eğitim alan bireyler için eğitim ve simülasyon amacıyla
