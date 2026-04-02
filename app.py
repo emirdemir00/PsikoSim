@@ -53,38 +53,7 @@ st.markdown("""
     <p style='color: #d1d1d1; font-size: 18px; margin-top: 10px; font-style: italic;'>Psikolog adayları için geliştirilmiş sanal danışan simülasyonu</p>
 </div>
 """, unsafe_allow_html=True)
-# --- 5. ANA EKRAN METRİKLERİ VE KARŞILAMA ---
-st.divider() # Banner ile istatistiklerin arasına ince bir çizgi atar
 
-if secilen_vaka_adi == "Seçiniz...":
-    # Henüz vaka seçilmemişken görünecek ekran
-    st.info("👋 Sisteme başarıyla giriş yaptınız. Seansa başlamak için sol menüden bir danışan dosyası seçin.")
-    
-    c1, c2, c3 = st.columns(3)
-    with c1:
-        st.metric(label="Sistem Durumu", value="Çevrimiçi", delta="Bağlantı Hazır")
-    with c2:
-        kayitli_sayi = len([k for k in vaka_kutuphanesi.keys() if k != "Seçiniz..."])
-        st.metric(label="Kayıtlı Vaka Sayısı", value=f"{kayitli_sayi} Danışan", delta="Güncel")
-    with c3:
-        st.metric(label="Klinik Oda Durumu", value="Müsait", delta="Görüşmeye Hazır")
-else:
-    # Vaka seçildiğinde görünecek ekran
-    st.subheader(f"🗣️ Danışan: {secilen_vaka_adi}")
-    
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.metric(label="Seans Aşaması", value="İlk Değerlendirme", delta="Anamnez Alımı")
-    with col2:
-        st.metric(label="Klinik Etkileşim", value="Serbest Keşif", delta="Aktif")
-    with col3:
-        st.metric(label="Klinik Kayıt", value="Aktif", delta="Gizlilik Sağlandı")
-
-    with st.expander("📄 Danışan Klinik Ön Bilgi Dosyası (Okumak İçin Tıklayın)"):
-        st.info("Bu bilgiler seans öncesi terapiste verilen ön rapordur.")
-        st.write(vaka_ozet)
-
-st.divider() # Metriklerden sonra sohbet alanına geçiş çizgisi
 # ------------------------------------
 # 4. YAN MENÜ (SIDEBAR)
 with st.sidebar:
@@ -181,7 +150,40 @@ with st.sidebar:
         st.link_button("Emir LinkedIn", "https://www.linkedin.com/in/itsemirdemir/")
     with col2:
         st.link_button("Ebru LinkedIn", "https://www.linkedin.com/in/ebru-demir-81a531369/")
+# --- 5. ANA EKRAN METRİKLERİ VE KARŞILAMA ---
+st.divider() 
 
+if secilen_vaka_adi == "Seçiniz...":
+    # Henüz vaka seçilmemişken görünecek ekran
+    st.info("👋 Sisteme başarıyla giriş yaptınız. Seansa başlamak için sol menüden bir danışan dosyası seçin.")
+    
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        st.metric(label="Sistem Durumu", value="Çevrimiçi", delta="Bağlantı Hazır")
+    with c2:
+        kayitli_sayi = len([k for k in vaka_kutuphanesi.keys() if k != "Seçiniz..."])
+        st.metric(label="Kayıtlı Vaka Sayısı", value=f"{kayitli_sayi} Danışan", delta="Güncel")
+    with c3:
+        st.metric(label="Klinik Oda Durumu", value="Müsait", delta="Görüşmeye Hazır")
+else:
+    # Vaka seçildiğinde görünecek ekran
+    st.subheader(f"🗣️ Danışan: {secilen_vaka_adi}")
+    
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric(label="Seans Aşaması", value="İlk Değerlendirme", delta="Anamnez Alımı")
+    with col2:
+        st.metric(label="Klinik Etkileşim", value="Serbest Keşif", delta="Aktif")
+    with col3:
+        st.metric(label="Klinik Kayıt", value="Aktif", delta="Gizlilik Sağlandı")
+
+    with st.expander("📄 Danışan Klinik Ön Bilgi Dosyası (Okumak İçin Tıklayın)"):
+        st.info("Bu bilgiler seans öncesi terapiste verilen ön rapor ve vakaya özel kurallardır.")
+        st.write(vaka_ozet)
+
+st.divider()
+
+# Buradan sonra senin mevcut "# 5. SOHBET MANTIĞI" kısmın başlayacak...
 # 5. SOHBET MANTIĞI
 if "mevcut_vaka" not in st.session_state:
     st.session_state.mevcut_vaka = secilen_vaka_adi
