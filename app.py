@@ -149,7 +149,7 @@ with st.sidebar:
                         if st.button("Metni Kaydet ve Özeti Yenile", key="btn_save_and_refresh"):
                             with st.spinner("Yapay zeka yeni özeti yazıyor..."):
                                 try:
-                                    sistem_istemi = f"Lütfen aşağıdaki klinik durumdan profesyonel bir özet çıkar:\n\n{yeni_kurallar}"
+                                    sistem_istemi = f"aşağıdaki klinik vakanın sadece adını, meslek bilgisini ve başvuru nedenini çıkar ve alt satıra geçerek şunları ekle: Bu simülasyonda amacınız: Danışanın öyküsünü sorularınızla ortaya çıkarmak Terapötik ilişki kurmak Danışanın yaşadığı sorunu anlamlandırmak:\n\n{yeni_kurallar}"
                                     response = client.chat.completions.create(
                                         model="gpt-4o",
                                         messages=[{"role": "user", "content": sistem_istemi}],
