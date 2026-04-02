@@ -49,11 +49,10 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # ------------------------------------
-# 3. YAN MENÜ (SIDEBAR) - İLETİŞİM VE HAKKINDA EKLEDİM
+# 3. YAN MENÜ (SIDEBAR)
 with st.sidebar:
     st.title("🧠 Psiko-Sim Lab")
     
-    # --- PROJE HAKKINDA KISMI ---
     with st.expander("ℹ️ Proje Hakkında", expanded=False):
         st.markdown("""
         Bu platform, psikoloji öğrencilerinin klinik pratik yapması için geliştirilmiştir.
@@ -63,26 +62,9 @@ with st.sidebar:
         - Dinamik Vaka Yönetimi
         - Otomatik Klinik Raporlama
 
-Önemli Not:
-Bu uygulamada yer alan tüm vaka örnekleri ve karakterler tamamen kurgusal olup, herhangi
-bir gerçek kişiyle benzerlik göstermesi tesadüfidir. Vaka içerikleri; psikoloji öğrencileri,
-uzmanlar ve ilgili alanlarda eğitim alan bireyler için eğitim ve simülasyon amacıyla
-hazırlanmıştır.
-Bu uygulama, gerçek bir psikolojik danışmanlık veya terapi hizmeti sunmamaktadır ve bu
-amaçla kullanılmamalıdır. Uygulama içerisinde gerçekleştirilen simülasyonlar, terapötik
-sürecin birebir karşılığı olmayıp, yalnızca olası senaryolar üzerinden beceri geliştirmeyi
-desteklemeyi hedeflemektedir.
-Her bireyin yaşantısı, psikolojik yapısı ve terapi sürecine verdiği tepkiler farklıdır. Bu
-nedenle, burada sunulan vakalar ve olası müdahale yolları genellenebilir veya kesin doğrular
-olarak değerlendirilmemelidir.
-Uygulama içeriği, kullanıcıların klinik karar verme süreçlerinin yerini almaz. Tanı koyma,
-müdahale planlama ve tedavi süreçleri yalnızca yetkin ve lisanslı ruh sağlığı profesyonelleri
-tarafından yürütülmelidir.
-Eğer siz veya çevrenizdeki biri psikolojik destek ihtiyacı içindeyse, lütfen bir uzman
-psikolog, psikiyatrist veya ilgili sağlık profesyoneline başvurunuz.
-Uygulamanın kullanımından doğabilecek doğrudan veya dolaylı sonuçlardan geliştirici ekip
-sorumlu tutulamaz.
-
+        **Önemli Not:**
+        Bu uygulamada yer alan tüm vaka örnekleri ve karakterler tamamen kurgusal olup, herhangi
+        bir gerçek kişiyle benzerlik göstermesi tesadüfidir...
         """)
 
     st.divider()
@@ -102,26 +84,26 @@ sorumlu tutulamaz.
                 
                 if st.button("Vakayı Sisteme Ekle"):
                     if yeni_vaka_adi and yeni_vaka_detayi:
-                        klinik_ozet = ""
-                        try:
-                            sistem_istemi = f"Lütfen aşağıdaki metinden sadece hastanın demografik bilgilerini ve klinik durumunu anlatan 2-3 cümlelik profesyonel bir klinik ön rapor çıkar:\n\n{yeni_vaka_detayi}"
-                            response = client.chat.completions.create(
-                                model="gpt-5.4-nano",
-                                messages=[{"role": "user", "content": sistem_istemi}],
-                                temperature=0.3
-                            )
-                            klinik_ozet = response.choices[0].message.content
-                        except Exception as e:
-                            klinik_ozet = "Özet oluşturulamadı (API bağlantısı bekleniyor)."
+                        with st.spinner("Vaka oluşturuluyor..."):
+                            try:
+                                sistem_istemi = f"Lütfen aşağıdaki metinden sadece hastanın demografik bilgilerini ve klinik durumunu anlatan 2-3 cümlelik profesyonel bir klinik ön rapor çıkar:\n\n{yeni_vaka_detayi}"
+                                response = client.chat.completions.create(
+                                    model="gpt-4o",
+                                    messages=[{"role": "user", "content": sistem_istemi}],
+                                    temperature=0.3
+                                )
+                                klinik_ozet = response.choices[0].message.content
+                            except:
+                                klinik_ozet = "Özet oluşturulamadı (API bağlantısı bekleniyor)."
 
-                        vaka_kutuphanesi[yeni_vaka_adi] = {
-                            "kurallar": yeni_vaka_detayi,
-                            "ozet": klinik_ozet
-                        }
-                        vakalari_kaydet(vaka_kutuphanesi) 
-                        st.success(f"✅ {yeni_vaka_adi} eklendi.")
-                        time.sleep(1.5)
-                        st.rerun()
+                            vaka_kutuphanesi[yeni_vaka_adi] = {
+                                "kurallar": yeni_vaka_detayi,
+                                "ozet": klinik_ozet
+                            }
+                            vakalari_kaydet(vaka_kutuphanesi) 
+                            st.success(f"✅ {yeni_vaka_adi} eklendi.")
+                            time.sleep(1.5)
+                            st.rerun()
 
             with tab2:
                 silinecek_vaka = st.selectbox(
@@ -138,30 +120,38 @@ sorumlu tutulamaz.
                         st.rerun()
 
             with tab3:
+                # DÜZENLEME KISMI GÜNCELLENDİ
                 duzenlenecek_ad = st.selectbox(
                     "Düzenlenecek Vaka:", 
                     options=[v for v in vaka_kutuphanesi.keys() if v != "Seçiniz..."],
-                    key="duzenle_selectbox"
+                    key="duzenle_vaka_secimi"
                 )
                 if duzenlenecek_ad:
                     eski_kurallar = vaka_kutuphanesi[duzenlenecek_ad]["kurallar"]
-                    yeni_kurallar = st.text_area("Senaryoyu Güncelle:", value=eski_kurallar, height=200, key="duzenle_area")
+                    
+                    # Benzersiz key ile text_area'yı kilitledik
+                    yeni_kurallar = st.text_area(
+                        "Senaryoyu Güncelle:", 
+                        value=eski_kurallar, 
+                        height=200, 
+                        key=f"area_{duzenlenecek_ad}" 
+                    )
                     
                     c1, c2 = st.columns(2)
                     with c1:
-                        if st.button("Sadece Metni Kaydet"):
+                        if st.button("Sadece Metni Kaydet", key="btn_save_only"):
                             vaka_kutuphanesi[duzenlenecek_ad]["kurallar"] = yeni_kurallar
                             vakalari_kaydet(vaka_kutuphanesi)
                             st.success("Güncellendi!")
                             time.sleep(1)
                             st.rerun()
                     with c2:
-                        if st.button("Metni Kaydet ve Özeti Yenile"):
+                        if st.button("Metni Kaydet ve Özeti Yenile", key="btn_save_and_refresh"):
                             with st.spinner("Yapay zeka yeni özeti yazıyor..."):
                                 try:
                                     sistem_istemi = f"Lütfen aşağıdaki klinik durumdan profesyonel bir özet çıkar:\n\n{yeni_kurallar}"
                                     response = client.chat.completions.create(
-                                        model="gpt-5.4-nano",
+                                        model="gpt-4o",
                                         messages=[{"role": "user", "content": sistem_istemi}],
                                         temperature=0.3
                                     )
@@ -179,7 +169,7 @@ sorumlu tutulamaz.
             st.error("Hatalı şifre!")
             
     st.divider()
-    secilen_vaka_adi = st.selectbox("Simüle edilecek danışan:", options=list(vaka_kutuphanesi.keys()))
+    secilen_vaka_adi = st.selectbox("Simüle edilecek danışan:", options=list(vaka_kutuphanesi.keys()), key="sim_vaka_sec")
     
     st.divider()
     if st.button("Sohbeti Sıfırla"):
@@ -189,23 +179,9 @@ sorumlu tutulamaz.
     # --- GELİŞTİRİCİ & DANIŞMAN KISMI ---
     st.sidebar.divider()
     st.sidebar.subheader("👨‍💻 Proje Ekibi")
-    
-    # Senin Bilgilerin
-    st.sidebar.info("**Emir Demir**\nGeliştirici - Yeni Medya ve Yönetim Bilişim Sistemleri Öğrencisi")
-    
-    # Ablanın Bilgileri
-    st.sidebar.success("**Ebru Demir** - Vaka Yazarı - Psikoloji Mezunu")
-    
-    # İletişim & Linkler
-    st.sidebar.write("🔗 **Bağlantılar:**")
-    
-    col1, col2 = st.sidebar.columns(2)
-    with col1:
-        st.link_button("Emir Demir LinkedIn", "https://www.linkedin.com/in/itsemirdemir/")
-    with col2:
-        st.link_button("Ebru Demir LinkedIn", "https://www.linkedin.com/in/ebru-demir-81a531369/")
+    st.sidebar.info("**Emir Demir**\nGeliştirici")
+    st.sidebar.success("**Ebru Demir**\nVaka Yazarı")
 
-    st.sidebar.caption("📧 itsemirdemir@gmail.com")
 # 4. hafıza temizliği
 if "mevcut_vaka" not in st.session_state:
     st.session_state.mevcut_vaka = secilen_vaka_adi
@@ -222,20 +198,14 @@ vaka_ozet = secilen_vaka_verisi["ozet"] if isinstance(secilen_vaka_verisi, dict)
 st.markdown("""
 <div style='background: linear-gradient(to right, #2b5876, #4e4376); padding: 20px; border-radius: 10px; text-align: center; color: white; margin-bottom: 25px;'>
     <h1 style='color: white; margin: 0; font-size: 36px;'>🧠 Psiko-Sim Laboratuvarı</h1>
-    <p style='margin: 5px 0 0 0; font-size: 18px; opacity: 0.9;'>Psikolog Adayları İçin Sanal Danışanlar</p>
 </div>
 """, unsafe_allow_html=True)
 
 if secilen_vaka_adi == "Seçiniz...":
     st.info("👈 Seansa başlamak için sol menüden bir danışan dosyası seçin.")
-    c1, c2, c3 = st.columns(3)
-    with c1: st.metric(label="Sistem Durumu", value="Çevrimiçi")
-    with c2: st.metric(label="Kayıtlı Vaka", value=len(vaka_kutuphanesi)-1)
-    with c3: st.metric(label="Klinik Oda", value="Müsait")
 else:
     st.subheader(f"🗣 Danışan: {secilen_vaka_adi}")
     with st.expander("📄 Danışan Klinik Ön Bilgi Dosyası"):
-        st.info("Bu bilgiler seans öncesi terapiste verilen ön rapordur.")
         st.write(vaka_ozet)
 
     st.divider()
@@ -258,12 +228,12 @@ else:
         with st.chat_message("assistant"):
             try:
                 response = client.chat.completions.create(
-                    model="gpt-5.4-nano",
+                    model="gpt-4o",
                     messages=st.session_state.messages,
                     temperature=0.4
                 )
                 answer = response.choices[0].message.content
                 st.markdown(answer)
                 st.session_state.messages.append({"role": "assistant", "content": answer})
-            except Exception as e:
-                st.error("Cevap üretilemiyor, lütfen API bağlantısını kontrol edin.")
+            except:
+                st.error("Cevap üretilemiyor.")
