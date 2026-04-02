@@ -165,15 +165,26 @@ with st.sidebar:
         st.session_state.messages = []
         st.rerun()
 
-    # --- GELİŞTİRİCİ İLETİŞİM KISMI ---
-    st.divider()
-    st.subheader("👨‍💻 Geliştirici")
-    st.info("**Emir Demir**\n\Yeni Medya ve Yönetim Bilişim Sistemleri Öğrencisi")
-    st.write("📩 itsemirdemir@gmail.com") # Kendi mailini yazabilirsin
-    st.link_button("🌐 LinkedIn Profilim", "https://www.linkedin.com/in/itsemirdemir/")
+    # --- GELİŞTİRİCİ & DANIŞMAN KISMI ---
+    st.sidebar.divider()
+    st.sidebar.subheader("👨‍💻 Proje Ekibi")
     
-    st.caption("v1.0.0 | © 2026 Psiko-Sim Project")
+    # Senin Bilgilerin
+    st.sidebar.info("**Emir Demir**\nYeni Medya ve Yönetim Bİlişim Sistemleri Öğrencisi")
+    
+    # Ablanın Bilgileri
+    st.sidebar.success("**Ebru Demir**\nVaka Yazarı")
+    
+    # İletişim & Linkler
+    st.sidebar.write("🔗 **Bağlantılar:**")
+    
+    col1, col2 = st.sidebar.columns(2)
+    with col1:
+        st.link_button("Emir Demir LinkedIn", "https://www.linkedin.com/in/itsemirdemir/")
+    with col2:
+        st.link_button("Ebru Demir LinkedIn", "https://www.linkedin.com/in/ebru-demir-81a531369/")
 
+    st.sidebar.caption("📧 itsemirdemir@gmail.com")
 # 4. hafıza temizliği
 if "mevcut_vaka" not in st.session_state:
     st.session_state.mevcut_vaka = secilen_vaka_adi
