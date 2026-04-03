@@ -89,14 +89,14 @@ with st.sidebar:
         if dil == "TR":
             st.markdown("""
             Bu platform, psikoloji öğrencilerinin klinik pratik yapması için geliştirilmiştir. 
-            \n**Önemli Not:** Bu uygulamada yer alan tüm vaka örnekleri ve karakterler tamamen kurgusal olup, 
+            **\nÖnemli Not:** Bu uygulamada yer alan tüm vaka örnekleri ve karakterler tamamen kurgusal olup, 
             gerçek bir psikolojik danışmanlık hizmeti sunmamaktadır. Tanı ve tedavi süreçleri 
             yalnızca lisanslı ruh sağlığı profesyonelleri tarafından yürütülmelidir.
             """)
         else:
             st.markdown("""
             This platform is developed for psychology students to practice clinical skills. 
-            \n**Important Note:** All cases and characters are fictional and do not provide 
+            **\nImportant Note:** All cases and characters are fictional and do not provide 
             real psychological counseling. Diagnosis and treatment processes should only 
             be conducted by licensed mental health professionals.
             """)
