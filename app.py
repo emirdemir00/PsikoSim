@@ -2,6 +2,7 @@ import streamlit as st
 from openai import OpenAI
 import time
 import os
+import io
 from supabase import create_client, Client 
 from streamlit_mic_recorder import mic_recorder
 
