@@ -205,7 +205,8 @@ else:
         prompt = st.chat_input(L["chat_placeholder"])
 
     # --- SOHBETİ İŞLEME (SES VEYA YAZI) ---
-    if prompt:
+    # prompt'un içi boş değilse ve sadece boşluktan ibaret değilse çalıştır:
+    if prompt and prompt.strip() != "":
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user"):
             st.markdown(prompt)
