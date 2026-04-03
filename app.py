@@ -174,7 +174,11 @@ else:
         st.session_state.messages = []
         
     if len(st.session_state.messages) == 0:
-        dil_emri = "\nLütfen TÜRKÇE konuş." if dil == "TR" else "\nPlease respond in ENGLISH."
+        # 1. DEĞİŞEN KISIM: ROLÜ KESİNLEŞTİREN SERT KOMUT (Selin Olmanı Engeller)
+        if dil == "TR":
+            dil_emri = "\nKATI KURAL: Sen DANIŞANSIN (Hasta). Karşındaki kişi TERAPİST. Asla terapist rolüne girme, sadece kendi derdini anlat ve sorulara cevap ver. Lütfen TÜRKÇE konuş."
+        else:
+            dil_emri = "\nSTRICT RULE: You are the PATIENT. The user is the THERAPIST. Never break character. Respond in ENGLISH."
         st.session_state.messages = [{"role": "system", "content": vaka_verisi["kurallar"] + dil_emri}]
 
     # Geçmiş mesajları ekrana çiz
@@ -203,18 +207,20 @@ else:
                     language="tr" # WHISPER'A KESİN EMİR: DİL TÜRKÇE!
                 )
                 
-                # Eğer Whisper boş veya anlamsız bir şey anlarsa bunu filtrele
-                if transcript.text and transcript.text.strip() != "":
-                    prompt = transcript.text
+                # 2. DEĞİŞEN KISIM: WHISPER HALÜSİNASYON FİLTRESİ (Altyazı M.K'yı engeller)
+                gelen_metin = transcript.text.strip()
+                yasakli_kelimeler = ["altyazı", "m.k", "m.k."]
+                
+                if gelen_metin and not any(yasak in gelen_metin.lower() for yasak in yasakli_kelimeler):
+                    prompt = gelen_metin
                 else:
-                    st.warning("Sesiniz tam alınamadı, butona basıp 1 saniye bekledikten sonra konuşmayı deneyin.")
+                    st.warning("Sesiniz anlaşılamadı. Lütfen butona basıp 1 saniye bekledikten sonra konuşun.")
             except Exception as e:
                 st.error(f"Whisper Hatası: {e}")
     else:
         prompt = st.chat_input(L["chat_placeholder"])
 
     # --- SOHBETİ İŞLEME (SES VEYA YAZI) ---
-    # prompt'un içi boş değilse ve sadece boşluktan ibaret değilse çalıştır:
     if prompt and prompt.strip() != "":
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user"):
