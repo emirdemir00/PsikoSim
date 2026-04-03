@@ -3,6 +3,7 @@ from openai import OpenAI
 import time
 import os
 from supabase import create_client, Client 
+from streamlit_mic_recorder import mic_recorder
 
 # --- 0. DİL SÖZLÜĞÜ (Metrikler dahil edildi) ---
 LANG_DICT = {
@@ -71,6 +72,20 @@ def vakalari_getir():
         return {"Seçiniz...": {"kurallar": "Hata", "ozet": "Hata"}}, "Seçiniz..."
 
 vaka_kutuphanesi, sec_text = vakalari_getir()
+
+def metni_sese_cevir(metin):
+    try:
+        response = client.audio.speech.create(
+            model="tts-1",
+            voice="nova", # 'alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer' arasından seçebilirsin
+            input=metin
+        )
+        # Sesi bellek üzerinde tutuyoruz (Dosya kaydetmeden hızlıca oynatmak için)
+        audio_data = io.BytesIO(response.content)
+        return audio_data
+    except Exception as e:
+        st.error(f"Ses oluşturma hatası: {e}")
+        return None
 
 # --- 4. ANA EKRAN BANNER ---
 st.markdown(f"""
@@ -160,7 +175,53 @@ else:
     for message in st.session_state.messages:
         if message["role"] != "system":
             with st.chat_message(message["role"]): st.markdown(message["content"])
+# --- SESLİ GİRİŞ (WHISPER) ---
+with st.container():
+    c1, c2 = st.columns([1, 9])
+    with c1:
+        # Mikrofon ikonu
+        audio = mic_recorder(
+            start_prompt="🎙️",
+            stop_prompt="🛑",
+            key="recorder"
+        )
 
+# Eğer ses kaydı yapıldıysa
+if audio:
+    with st.spinner("Sesiniz metne dönüştürülüyor..."):
+        # Sesi OpenAI Whisper'a gönderiyoruz
+        audio_bio = io.BytesIO(audio['bytes'])
+        audio_bio.name = "audio.wav"
+        
+        transcript = client.audio.transcriptions.create(
+            model="whisper-1", 
+            file=audio_bio
+        )
+        prompt = transcript.text # Ses metne dönüştü!
+else:
+    prompt = st.chat_input(L["chat_placeholder"])
+
+# --- SOHBETİ İŞLEME (MEVCUT KODUNUN DEVAMI) ---
+if prompt:
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.markdown(prompt)
+
+    with st.chat_message("assistant"):
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=st.session_state.messages,
+            temperature=0.4
+        )
+        answer = response.choices[0].message.content
+        st.markdown(answer)
+        
+        # --- YENİ: AI CEVABINI SESLİ OYNAT ---
+        audio_file = metni_sese_cevir(answer)
+        if audio_file:
+            st.audio(audio_file, format="audio/mp3", autoplay=True)
+            
+        st.session_state.messages.append({"role": "assistant", "content": answer})
     if prompt := st.chat_input(L["chat_placeholder"]):
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user"): st.markdown(prompt)
