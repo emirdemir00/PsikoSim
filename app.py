@@ -192,15 +192,24 @@ else:
 
     prompt = None
     if audio_data and 'bytes' in audio_data:
-        with st.spinner("Sesiniz metne dönüştürülüyor..." if dil == "TR" else "Converting speech to text..."):
+        with st.spinner("Sesiniz anlaşılıyor..." if dil == "TR" else "Listening..."):
             audio_bio = io.BytesIO(audio_data['bytes'])
-            audio_bio.name = "audio.wav"
+            audio_bio.name = "audio.webm" # .wav yerine webm tarayıcılar için daha stabildir
             
-            transcript = client.audio.transcriptions.create(
-                model="whisper-1", 
-                file=audio_bio
-            )
-            prompt = transcript.text
+            try:
+                transcript = client.audio.transcriptions.create(
+                    model="whisper-1", 
+                    file=audio_bio,
+                    language="tr" # WHISPER'A KESİN EMİR: DİL TÜRKÇE!
+                )
+                
+                # Eğer Whisper boş veya anlamsız bir şey anlarsa bunu filtrele
+                if transcript.text and transcript.text.strip() != "":
+                    prompt = transcript.text
+                else:
+                    st.warning("Sesiniz tam alınamadı, butona basıp 1 saniye bekledikten sonra konuşmayı deneyin.")
+            except Exception as e:
+                st.error(f"Whisper Hatası: {e}")
     else:
         prompt = st.chat_input(L["chat_placeholder"])
 
