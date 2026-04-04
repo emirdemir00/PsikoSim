@@ -103,29 +103,28 @@ lottie_dusunuyor = lottie_yukle("https://lottie.host/80d0d885-3b95-4eb8-a1e4-4ab
 # --- MODERN ARAYÜZ CSS ENJEKSİYONU ---
 st.markdown("""
 <style>
-    /* Ana arka plan - !important ile Streamlit'i eziyoruz */
-    .stApp, .main {
-        background-color: #F4F6F9 !important;
-        font-family: 'Inter', sans-serif !important;
+    /* 1. ANA ARKA PLAN (Burası değişince her şey ortaya çıkacak) */
+    [data-testid="stAppViewContainer"] {
+        background-color: #EBF0F6 !important; /* Hafif mavi-gri bir arka plan */
     }
     
-    /* Yan menü (Sidebar) */
+    /* 2. YAN MENÜ (Sidebar - Bembeyaz kalıp kontrast yaratacak) */
     [data-testid="stSidebar"] {
         background-color: #FFFFFF !important;
-        border-right: 1px solid #EAEAEA !important;
+        border-right: 1px solid #DCE0E5 !important;
     }
     
-    /* Sohbet Balonları */
+    /* 3. SOHBET BALONLARI (Gölgeli ve yuvarlak) */
     [data-testid="stChatMessage"] {
         background-color: #FFFFFF !important;
         border-radius: 15px !important;
         padding: 15px !important;
-        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.05) !important;
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.08) !important;
         margin-bottom: 15px !important;
         border: 1px solid #E8E8E8 !important;
     }
     
-    /* Metrikler (Durum, Vaka Sayısı vb.) */
+    /* 4. METRİKLER (Klinik durum vs.) */
     [data-testid="stMetric"] {
         background-color: #FFFFFF !important;
         border-radius: 12px !important;
@@ -134,19 +133,16 @@ st.markdown("""
         border-left: 5px solid #6C63FF !important;
     }
     
-    /* Yazı yazma (Chat Input) kutusu */
-    .stChatInputContainer {
-        border-radius: 20px !important;
-        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.08) !important;
+    /* 5. YAZI YAZMA KUTUSU (Chat Input) */
+    [data-testid="stChatInput"] {
         background-color: #FFFFFF !important;
-        border: none !important;
+        border-radius: 20px !important;
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1) !important;
     }
 
-    /* Expander (Bilgi Dosyası) */
-    .streamlit-expanderHeader {
-        background-color: #FFFFFF !important;
-        border-radius: 10px !important;
-        border: 1px solid #EAEAEA !important;
+    /* Üst menü çubuğunu gizle/şeffaflaştır */
+    [data-testid="stHeader"] {
+        background-color: transparent !important;
     }
 </style>
 """, unsafe_allow_html=True)
