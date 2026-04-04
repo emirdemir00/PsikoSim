@@ -5,6 +5,8 @@ import os
 import io
 from supabase import create_client, Client 
 from streamlit_mic_recorder import mic_recorder
+import requests
+from streamlit_lottie import st_lottie
 
 # --- 0. DİL SÖZLÜĞÜ (Metrikler dahil edildi) ---
 LANG_DICT = {
@@ -88,7 +90,65 @@ def metni_sese_cevir(metin):
         st.error(f"Ses oluşturma hatası: {e}")
         return None
 
+# --- LOTTIE ANİMASYON YÜKLEYİCİ ---
+def lottie_yukle(url):
+    r = requests.get(url)
+    if r.status_code != 200:
+        return None
+    return r.json()
+
 # --- 4. ANA EKRAN BANNER ---
+
+# --- MODERN ARAYÜZ CSS ENJEKSİYONU ---
+st.markdown("""
+<style>
+    /* Ana arka planı çok hafif bir gri yapıp kontrast sağlayalım */
+    .stApp {
+        background-color: #F8F9FA;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    /* Yan menü (Sidebar) stili - Daha yumuşak bir ton */
+    [data-testid="stSidebar"] {
+        background-color: #FFFFFF;
+        border-right: 1px solid #EAEAEA;
+        box-shadow: 2px 0px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    /* Terapist (Kullanıcı) ve Danışan (AI) Sohbet Balonlarını Özelleştirme */
+    [data-testid="stChatMessage"] {
+        background-color: #FFFFFF;
+        border-radius: 15px;
+        padding: 15px;
+        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.04);
+        margin-bottom: 15px;
+        border: 1px solid #F0F0F0;
+    }
+    
+    /* Metrikleri (Durum, Etkileşim) Apple/Modern UI tarzı kutulara alma */
+    [data-testid="stMetric"] {
+        background-color: #FFFFFF;
+        border-radius: 12px;
+        padding: 15px 20px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.03);
+        border-left: 4px solid #6C63FF; /* Tasarıma modern bir mor/lila dokunuşu */
+    }
+    
+    /* Input (Yazı yazma) kutusunu yuvarlatma */
+    .stChatInputContainer {
+        border-radius: 20px !important;
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    /* Expander (Hakkında / Bilgi Dosyası) kısımlarını yumuşatma */
+    .streamlit-expanderHeader {
+        background-color: #FFFFFF;
+        border-radius: 10px;
+        font-weight: 600;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 st.markdown(f"""
 <div style='background: linear-gradient(to right, #2b5876, #4e4376); padding: 25px; border-radius: 12px; text-align: center; color: white; margin-bottom: 25px;'>
     <h1 style='color: white; margin: 0; font-size: 38px;'>{L['title']}</h1>
@@ -230,16 +290,32 @@ else:
             st.markdown(prompt)
 
         with st.chat_message("assistant"):
+            # Lottie animasyonunu göstermek için geçici bir alan açıyoruz
+            animasyon_alani = st.empty()
+            
+            with animasyon_alani.container():
+                if lottie_dusunuyor:
+                    # Animasyon ortalanmış ve kibar bir boyutta
+                    st_lottie(lottie_dusunuyor, height=60, key="typing_animation")
+                else:
+                    st.write("Düşünüyor..." if dil == "TR" else "Thinking...")
+
             try:
+                # Arka planda AI cevabı üretiyor
                 response = client.chat.completions.create(
                     model="gpt-4o", 
                     messages=st.session_state.messages,
                     temperature=0.4
                 )
                 answer = response.choices[0].message.content
+                
+                # AI cevabı hazır olunca animasyonu ekrandan siliyoruz!
+                animasyon_alani.empty()
+                
+                # Ve gerçek cevabı ekrana basıyoruz
                 st.markdown(answer)
                 
-                # --- AI SESLİ CEVAP (SADECE SESLİ GİRİŞ YAPILDIYSA) ---
+                # --- AI SESLİ CEVAP ---
                 if sesli_girdi_mi:
                     audio_file = metni_sese_cevir(answer)
                     if audio_file:
@@ -247,4 +323,5 @@ else:
                     
                 st.session_state.messages.append({"role": "assistant", "content": answer})
             except Exception as e:
+                animasyon_alani.empty() # Hata olursa da animasyon takılı kalmasın
                 st.error(f"Hata oluştu: {e}")

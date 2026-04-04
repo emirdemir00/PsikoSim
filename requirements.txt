@@ -2,3 +2,5 @@ streamlit
 openai
 supabase
 streamlit-mic-recorder
+streamlit-lottie
+requests
