@@ -96,6 +96,7 @@ def lottie_yukle(url):
     if r.status_code != 200:
         return None
     return r.json()
+lottie_dusunuyor = lottie_yukle("https://lottie.host/80d0d885-3b95-4eb8-a1e4-4ab23f990ea5/rYvT9j8XmO.json")
 
 # --- 4. ANA EKRAN BANNER ---
 
