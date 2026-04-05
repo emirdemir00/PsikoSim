@@ -111,7 +111,7 @@ export default function PsikoSimMaster() {
           kurallar: formData.get("kurallar")
         };
 
-        await fetch(`http://127.0.0.1:8000/vaka-guncelle`, {
+        await fetch(`https://psikosim-backend.onrender.com//vaka-guncelle`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(guncelVeri)
@@ -124,7 +124,7 @@ export default function PsikoSimMaster() {
           ozet: formData.get("ozet"),
           kurallar: formData.get("kurallar")
         };
-        await fetch("http://127.0.0.1:8000/vaka-ekle", {
+        await fetch("https://psikosim-backend.onrender.com//vaka-ekle", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(vakaVerisi)
@@ -158,7 +158,7 @@ export default function PsikoSimMaster() {
         ozet: currentVaka.ozet, // Özet değişmiyor
         kurallar: currentVaka.kurallar // Yalnızca güncel kurallar gidiyor
       };
-      const res = await fetch(`http://127.0.0.1:8000/vaka-guncelle`, {
+      const res = await fetch(`https://psikosim-backend.onrender.com//vaka-guncelle`, {
         method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(guncelVeri)
       });
       if(res.ok) {
@@ -187,7 +187,7 @@ export default function PsikoSimMaster() {
                 formData.append("file", audioBlob, "audio.webm");
                 
                 try {
-                    const res = await fetch("http://127.0.0.1:8000/ses-isleme", { method: "POST", body: formData });
+                    const res = await fetch("https://psikosim-backend.onrender.com//ses-isleme", { method: "POST", body: formData });
                     const data = await res.json();
                     if (data.text) {
                         mesajIlet(data.text, true); // Sesli mod AKTİF
@@ -227,7 +227,7 @@ export default function PsikoSimMaster() {
      6. Cevapların kısa, duygusal ve sadece kendi yaşadığın sıkıntılar üzerine olsun.`;
 
      try {
-        const response = await fetch("http://127.0.0.1:8000/chat", {
+        const response = await fetch("https://psikosim-backend.onrender.com//chat", {
            method: "POST",
            headers: { "Content-Type": "application/json" },
            body: JSON.stringify({
