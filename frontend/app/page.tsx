@@ -36,7 +36,7 @@ export default function PsikoSimMaster() {
   const vakaYukle = async () => {
     try {
       const timestamp = new Date().getTime();
-      const res = await fetch(`http://127.0.0.1:8000/vakalar?t=${timestamp}`, { 
+      const res = await fetch(`https://psikosim-backend.onrender.com/vakalar?t=${timestamp}`, { 
         cache: 'no-store'
       });
       
@@ -142,7 +142,7 @@ export default function PsikoSimMaster() {
     if(window.confirm(`'${adi}' adlı vakayı silmek istediğinize emin misiniz?`)) {
       setVakalar(prev => prev.filter(v => v.vaka_adi !== adi));
       try {
-        await fetch(`http://127.0.0.1:8000/vaka-sil/${adi}`, { method: "DELETE" });
+        await fetch(`https://psikosim-backend.onrender.com/vaka-sil/${adi}`, { method: "DELETE" });
         vakaYukle();
       } catch (err) {}
     }

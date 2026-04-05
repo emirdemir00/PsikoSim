@@ -24,7 +24,12 @@ app = FastAPI(title="Psycho-Sim Backend")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    # Buradaki listeye KENDİ Vercel linkini ekle (Sonunda / olmasın!)
+    allow_origins=[
+        "http://localhost:3000", 
+        "https://psiko-sim.vercel.app", # Kendi vercel linkini buraya yaz
+        "https://psikosim-emir.vercel.app" # Vercel'in verdiği diğer varyasyonları da ekleyebilirsin
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
