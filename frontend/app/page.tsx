@@ -346,7 +346,7 @@ export default function PsikoSimMaster() {
   );
 
   return (
-    <main className="flex h-screen bg-[#F4F7FE] text-slate-700 font-sans overflow-hidden not-italic">
+    <main className="flex h-screen bg-[#F8FAFC] text-[#1E293B] font-sans overflow-hidden antialiased">
       
       {/* KARŞILAMA MODALI */}
       {showProfileModal && (
@@ -566,7 +566,7 @@ export default function PsikoSimMaster() {
       ) : (
       /* CHAT DIŞINDAKİ SAYFALAR (DASHBOARD, KÜTÜPHANE VB.) */
       <>
-         <aside className="w-[280px] bg-[#F8F9FB] border-r border-slate-200 flex flex-col p-6 shrink-0 z-50">
+         <aside className="w-[280px] bg-white border-r border-slate-100 flex flex-col p-6 shrink-0 z-50 shadow-sm">
            <div className="flex items-center gap-4 mb-10 px-2 cursor-pointer" onClick={() => setActivePage('dashboard')}>
              <div className="w-12 h-12 bg-[#3E34FA] rounded-2xl flex items-center justify-center text-white font-black text-2xl shadow-lg shadow-indigo-200">🧠</div>
              <div>
@@ -577,19 +577,27 @@ export default function PsikoSimMaster() {
 
            <nav className="flex-1 flex flex-col space-y-2">
              {[
-               { id: 'dashboard', name: 'Simülasyon Lab', icon: '🧪' },
-               { id: 'library', name: 'Vaka Kütüphanesi', icon: '📚' },
-               { id: 'team', name: 'Ekip', icon: '👥' },
-               { id: 'about', name: 'Proje Hakkında', icon: 'ℹ️' },
-             ].map((item) => (
-               <button key={item.id} onClick={() => setActivePage(item.id)} className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-sm font-bold transition-all ${activePage === item.id ? 'bg-white text-[#3E34FA] border-r-4 border-[#3E34FA] shadow-sm' : 'text-[#A3AED0] hover:bg-white/50 hover:text-slate-600'}`}>
-                 <span className="text-lg">{item.icon}</span> {item.name}
-               </button>
-             ))}
+        { id: 'dashboard', name: 'Simülasyon Lab', icon: '🧪' },
+        { id: 'library', name: 'Vaka Kütüphanesi', icon: '📚' },
+        { id: 'team', name: 'Ekip', icon: '👥' },
+        { id: 'about', name: 'Proje Hakkında', icon: 'ℹ️' },
+      ].map((item) => (
+        <button 
+          key={item.id} 
+          onClick={() => setActivePage(item.id)} 
+          className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+            activePage === item.id 
+              ? 'bg-[#3E34FA] text-white shadow-md shadow-indigo-200' 
+              : 'text-[#64748B] hover:bg-slate-50 hover:text-[#1E293B]'
+          }`}
+        >
+          <span className="text-lg opacity-90">{item.icon}</span> {item.name}
+        </button>
+      ))}
              <div className="mt-auto pt-10 space-y-2">
-                <button onClick={() => setActivePage('admin')} className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-sm font-bold transition-all ${activePage === 'admin' ? 'bg-indigo-50 text-[#3E34FA] border-r-4 border-[#3E34FA] shadow-sm' : 'text-[#A3AED0] hover:bg-white/50 hover:text-slate-600'}`}>
-                  <span className="text-lg">🛠️</span> Yetkili Paneli
-                </button>
+                <button onClick={() => setActivePage('admin')} className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${activePage === 'admin' ? 'bg-slate-100 text-[#1E293B] shadow-sm' : 'text-[#64748B] hover:bg-slate-50 hover:text-[#1E293B]'}`}>
+  <span className="text-lg opacity-90">🛠️</span> Yetkili Paneli
+</button>
              </div>
            </nav>
          </aside>
