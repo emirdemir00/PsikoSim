@@ -427,7 +427,8 @@ export default function PsikoSimMaster() {
                      <span className="text-lg">✨</span> Müdahaleler
                   </button>
                </nav>
-               <button onClick={() => setActivePage('admin')} className="w-full py-4 bg-[#B91C1C] text-white rounded-xl font-bold text-sm shadow-md flex justify-center items-center gap-2 hover:bg-red-800 transition-all">
+               {/* RAPORA GÖTÜREN YENİ SEANSI BİTİR BUTONU */}
+               <button onClick={() => setActivePage('seans-raporu')} className="w-full py-4 bg-[#B91C1C] text-white rounded-xl font-bold text-sm shadow-md flex justify-center items-center gap-2 hover:bg-red-800 transition-all">
                   ↪ Seansı Bitir
                </button>
             </aside>
@@ -633,6 +634,45 @@ export default function PsikoSimMaster() {
                        </div>
                      ))}
                    </div>
+                   
+                   {/* YENİ EKLENEN: AKTİF SİMÜLASYON DURUMU */}
+                   <div className="bg-white rounded-[32px] p-8 shadow-sm border border-slate-100 relative overflow-hidden group transition-all hover:shadow-md">
+                     <div className="flex justify-between items-center mb-6">
+                       <div>
+                         <h3 className="text-lg font-bold text-[#1E293B]">Aktif Simülasyon</h3>
+                         <p className="text-xs text-[#64748B] font-medium">Devam eden seans verileri</p>
+                       </div>
+                       <button onClick={() => setActivePage('library')} className="text-[#3E34FA] text-xs font-bold hover:underline">Tümünü Gör ➔</button>
+                     </div>
+                     
+                     <div className="flex items-center gap-8 bg-[#F8FAFC] p-6 rounded-3xl border border-slate-50">
+                       <div className="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center text-2xl shadow-inner">👤</div>
+                       <div className="flex-1">
+                         <div className="flex items-center gap-3 mb-1">
+                           <h4 className="text-base font-bold text-[#1E293B]">{currentVaka?.vaka_adi || "Seçili Vaka Yok"}</h4>
+                           <span className="bg-[#E9E3FF] text-[#3E34FA] text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-tighter">DEVAM EDİYOR</span>
+                         </div>
+                         <p className="text-xs text-[#64748B] font-medium">Son etkileşim: {mesajlar.length > 0 ? mesajlar[mesajlar.length - 1].time : "Henüz başlanmadı"}</p>
+                       </div>
+                       <div className="flex items-center gap-10 pr-4">
+                         <div className="text-center">
+                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">MESAJLAR</p>
+                           <p className="text-lg font-bold text-[#1E293B]">{mesajlar.length}</p>
+                         </div>
+                         <div className="text-center">
+                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">SÜRE</p>
+                           <p className="text-lg font-bold text-[#1E293B]">{formatTime(seansSuresi)}</p>
+                         </div>
+                         <button 
+                           onClick={() => { if(currentVaka) setActivePage('chat-session') }}
+                           className="w-10 h-10 bg-white border border-slate-200 rounded-full flex items-center justify-center shadow-sm hover:bg-[#3E34FA] hover:text-white transition-all group-hover:scale-110"
+                         >
+                           ➔
+                         </button>
+                       </div>
+                     </div>
+                   </div>
+
                  </div>
 
                  <div className="w-[340px] bg-white border-l border-slate-200 p-8 flex flex-col items-center">
@@ -685,7 +725,7 @@ export default function PsikoSimMaster() {
                </div>
              )}
 
-             {/* 3. EKİP ÜYELERİ (TASARIM GÜNCELLENDİ - METİNLER KORUNDU) */}
+             {/* 3. EKİP ÜYELERİ */}
              {activePage === 'team' && (
                <div className="p-12 space-y-12 animate-in fade-in duration-500 max-w-7xl mx-auto">
                  <div className="max-w-3xl">
@@ -729,7 +769,7 @@ export default function PsikoSimMaster() {
                      </div>
                    ))}
 
-                   {/* EKİBE KATILIN KARTI (IMAGE 7 DETAYI) */}
+                   {/* EKİBE KATILIN KARTI */}
                    <div className="border-2 border-dashed border-slate-200 rounded-[32px] p-8 flex flex-col items-center justify-center text-center space-y-4 hover:border-[#3E34FA] transition-colors cursor-pointer group">
                       <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">✨</div>
                       <h3 className="text-lg font-bold text-[#1E293B]">Ekibe Katılın</h3>
@@ -738,7 +778,7 @@ export default function PsikoSimMaster() {
                    </div>
                  </div>
 
-                 {/* VİZYONUMUZ KARTI (ALT KISIM) */}
+                 {/* VİZYONUMUZ KARTI */}
                  <div className="bg-white rounded-[40px] p-10 border border-slate-100 shadow-sm flex flex-col md:flex-row items-center justify-between gap-12 mt-12">
                     <div className="max-w-2xl">
                        <h3 className="text-2xl font-bold text-[#1E293B] mb-4">Vizyonumuz</h3>
@@ -753,6 +793,7 @@ export default function PsikoSimMaster() {
                  </div>
                </div>
              )}
+
              {/* 4. PROJE HAKKINDA */}
              {activePage === 'about' && (
                <div className="p-12 space-y-8 animate-in fade-in duration-300">
@@ -850,6 +891,51 @@ export default function PsikoSimMaster() {
                    )}
                 </div>
              )}
+
+             {/* 6. YENİ EKLENEN: SEANS SONU ANALİZ RAPORU */}
+             {activePage === 'seans-raporu' && (
+               <div className="p-12 max-w-5xl mx-auto space-y-8 animate-in zoom-in-95 duration-500">
+                 <div className="bg-[#3E34FA] rounded-[40px] p-10 text-white shadow-xl relative overflow-hidden">
+                   <div className="relative z-10">
+                     <h1 className="text-3xl font-bold mb-2">Simülasyon Tamamlandı</h1>
+                     <p className="opacity-80 text-sm font-medium">Danışan: {currentVaka?.vaka_adi || 'Bilinmiyor'} | Toplam Süre: {formatTime(seansSuresi)}</p>
+                   </div>
+                   <div className="absolute right-10 top-1/2 -translate-y-1/2 text-8xl opacity-20 font-black">📋</div>
+                 </div>
+
+                 <div className="grid grid-cols-3 gap-6">
+                   <div className="col-span-2 space-y-6">
+                     <div className="bg-white rounded-[32px] p-8 border border-slate-100 shadow-sm">
+                       <h3 className="text-lg font-bold text-[#1E293B] mb-6 flex items-center gap-2"><span>📈</span> Klinik Değerlendirme</h3>
+                       <div className="space-y-6 text-slate-600 text-sm leading-relaxed">
+                         <p><b className="text-[#3E34FA]">Terapötik İttifak:</b> Seans boyunca danışanın direnciyle başa çıkma biçimin profesyoneldi. Danışan {mesajlar.length}. mesajdan sonra daha fazla açılmaya başladı.</p>
+                         <div className="bg-slate-50 p-6 rounded-2xl border-l-4 border-[#3E34FA]">
+                           <p className="font-bold text-[#1E293B] mb-2">Öneri:</p>
+                           "Neden böyle hissediyorsun?" yerine "Bu hissin sana ne anlatmaya çalıştığını merak ediyorum." gibi yansıtıcı soruları bir sonraki seansında %20 daha fazla kullanmayı deneyebilirsin.
+                         </div>
+                       </div>
+                     </div>
+                   </div>
+
+                   <div className="space-y-6">
+                     <div className="bg-white rounded-[32px] p-8 border border-slate-100 shadow-sm text-center">
+                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">EMPATİ SKORU</p>
+                       <div className="text-5xl font-black text-[#3E34FA] mb-4">%88</div>
+                       <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                         <div className="bg-[#3E34FA] h-full" style={{width: '88%'}}></div>
+                       </div>
+                     </div>
+                     <button 
+                       onClick={() => setActivePage('dashboard')}
+                       className="w-full py-4 bg-[#1E293B] text-white rounded-2xl font-bold text-sm shadow-md hover:bg-black transition-all"
+                     >
+                       Laboratuvara Dön
+                     </button>
+                   </div>
+                 </div>
+               </div>
+             )}
+
            </div>
          </section>
       </>
