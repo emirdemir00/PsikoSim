@@ -163,7 +163,7 @@ export default function PsikoSimMaster() {
         ozet: currentVaka.ozet, // Özet değişmiyor
         kurallar: currentVaka.kurallar // Yalnızca güncel kurallar gidiyor
       };
-      const res = await fetch(`https://psikosim-backend.onrender.com//vaka-guncelle`, {
+      const res = await fetch(`https://psikosim-backend.onrender.com/vaka-guncelle`, {
         method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(guncelVeri)
       });
       if(res.ok) {
@@ -192,7 +192,7 @@ export default function PsikoSimMaster() {
                 formData.append("file", audioBlob, "audio.webm");
                 
                 try {
-                    const res = await fetch("https://psikosim-backend.onrender.com//ses-isleme", { method: "POST", body: formData });
+                    const res = await fetch("https://psikosim-backend.onrender.com/ses-isleme", { method: "POST", body: formData });
                     const data = await res.json();
                     if (data.text) {
                         mesajIlet(data.text, true); // Sesli mod AKTİF
@@ -232,7 +232,7 @@ export default function PsikoSimMaster() {
      6. Cevapların kısa, duygusal ve sadece kendi yaşadığın sıkıntılar üzerine olsun.`;
 
      try {
-        const response = await fetch("https://psikosim-backend.onrender.com//chat", {
+        const response = await fetch("https://psikosim-backend.onrender.com/chat", {
            method: "POST",
            headers: { "Content-Type": "application/json" },
            body: JSON.stringify({
