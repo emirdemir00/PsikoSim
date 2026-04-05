@@ -694,8 +694,8 @@ export default function PsikoSimMaster() {
                  </div>
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                    {[
-                     { n: "Emir Demir", r: "Yeni Medya ve YBS Öğrencisi", g: "Geliştirici ve Kurucu", d: "Yapay zeka ile üretime ve projelere yönelen Emir, platformun teknik altyapısını ve interaktif simülasyon motorlarını yönetiyor.", l: "https://www.linkedin.com/in/itsemirdemir/", imgUrl: "https://media.licdn.com/dms/image/v2/D4D03AQEpx3b3i8UCUw/profile-displayphoto-scale_400_400/B4DZ0Ez2AuIcAg-/0/1773902196817?e=1776902400&v=beta&t=fIIAjnL3MSdz20YGARqAIfxOM6Hbn35QWlIndohI-mw" },
-                     { n: "Ebru Demir", r: "Psikoloji Mezunu", g: "Vaka Yazarı", d: "Ebru, psikolojik teorileri simülasyon senaryolarına dönüştürerek kullanıcıların gerçekçi vaka analizleri yapmasını sağlıyor.", l: "https://www.linkedin.com/in/ebru-demir-81a531369/", imgUrl: "https://media.licdn.com/dms/image/v2/D4D03AQEX-AMnuz6mXQ/profile-displayphoto-shrink_400_400/B4DZc08dpLHAAg-/0/1748939957316?e=1776902400&v=beta&t=pnlajODDNqxeDgE6QhvLZ0x4nKPexVKGBZRzQlyNbu0" }
+                     { n: "Emir Demir", r: "Yeni Medya ve YBS Öğrencisi", g: "Geliştirici ve Kurucu", d: "Yapay zeka ile üretime ve projelere yönelen Emir, platformun teknik altyapısını ve interaktif simülasyon motorlarını yönetiyor.", l: "https://www.linkedin.com/in/itsemirdemir/", imgUrl: "/emir.jpg" },
+                     { n: "Ebru Demir", r: "Psikoloji Mezunu", g: "Vaka Yazarı", d: "Ebru, psikolojik teorileri simülasyon senaryolarına dönüştürerek kullanıcıların gerçekçi vaka analizleri yapmasını sağlıyor.", l: "https://www.linkedin.com/in/ebru-demir-81a531369/", imgUrl: "/ebru.jpg" }
                    ].map((u, i) => (
                      <div key={i} className="bg-white rounded-[24px] p-8 border border-slate-100 shadow-md border-t-[6px] border-t-[#3E34FA] flex flex-col hover:shadow-lg transition-all">
                        <div className="flex items-center gap-4 mb-6">
