@@ -1,6 +1,7 @@
-streamlit
+fastapi
+uvicorn
 openai
 supabase
-streamlit-mic-recorder
-streamlit-lottie
+python-multipart
 requests
+python-dotenv

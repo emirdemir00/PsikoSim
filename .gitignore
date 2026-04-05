@@ -9,3 +9,5 @@ __pycache__/
 
 # Streamlit ayarları
 .streamlit/
+
+.env
