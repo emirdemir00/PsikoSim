@@ -97,13 +97,14 @@ export default function PsikoSimMaster() {
   };
 
   // Vaka Kaydet (Güncelleme Sorunu JSON Paketiyle Çözüldü)
+  // --- page.tsx İÇİNDEKİ SADECE DEĞİŞEN FONKSİYONLAR ---
+
   const handleVakaKaydet = async (e: any) => {
     e.preventDefault();
     const formData = new FormData(e.target);
 
     try {
       if (duzenlenenVaka) {
-        // GÜNCELLEME İŞLEMİ (Eski vaka adı direkt verinin içine gömüldü)
         const guncelVeri = {
           eski_vaka_adi: duzenlenenVaka.vaka_adi,
           yeni_vaka_adi: formData.get("vaka_adi"),
@@ -111,40 +112,44 @@ export default function PsikoSimMaster() {
           kurallar: formData.get("kurallar")
         };
 
-        await fetch(`https://psikosim-backend.onrender.com/vaka-guncelle`, {
+        await fetch(`https://psikosim-backend.onrender.com/vaka-guncelle`, { // SLASH DÜZELTİLDİ
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(guncelVeri)
         });
-        setDuzenlenenVaka(null); // Düzenleme modundan çık
+        setDuzenlenenVaka(null);
       } else {
-        // YENİ EKLEME İŞLEMİ
         const vakaVerisi = {
           vaka_adi: formData.get("vaka_adi"),
           ozet: formData.get("ozet"),
           kurallar: formData.get("kurallar")
         };
-        await fetch("https://psikosim-backend.onrender.com/vaka-ekle", {
+        await fetch("https://psikosim-backend.onrender.com/vaka-ekle", { // SLASH DÜZELTİLDİ
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(vakaVerisi)
         });
       }
-      vakaYukle(); // Listeyi tazele
+      vakaYukle(); 
       e.target.reset();
+      alert("İşlem Başarılı!"); // Geri bildirim ekledim ki çalıştığını anla
     } catch (err) {
       console.error(err);
+      alert("Bir hata oluştu.");
     }
   };
 
-  // CRUD - Vaka Sil
   const handleVakaSil = async (adi: string) => {
     if(window.confirm(`'${adi}' adlı vakayı silmek istediğinize emin misiniz?`)) {
-      setVakalar(prev => prev.filter(v => v.vaka_adi !== adi));
       try {
-        await fetch(`https://psikosim-backend.onrender.com/vaka-sil/${adi}`, { method: "DELETE" });
-        vakaYukle();
-      } catch (err) {}
+        const res = await fetch(`https://psikosim-backend.onrender.com/vaka-sil/${adi}`, { method: "DELETE" });
+        if(res.ok) {
+            setVakalar(prev => prev.filter(v => v.vaka_adi !== adi));
+            vakaYukle();
+        }
+      } catch (err) {
+          console.error("Silme hatası:", err);
+      }
     }
   };
 

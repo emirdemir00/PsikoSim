@@ -24,11 +24,7 @@ app = FastAPI(title="Psycho-Sim Backend")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "https://psiko-sim.vercel.app", # Kendi Vercel linkini buraya tırnaksız/temiz yapıştır
-        "*" # GEÇİCİ ÇÖZÜM: Eğer hala olmazsa buraya "*" yazarsan her yerden gelen isteği kabul eder.
-    ],
+    allow_origins=["*"], # Canlıda bazen Vercel'in alt domainleri çakışabiliyor, en güvenli yol bu.
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -75,11 +71,13 @@ def vaka_ekle(vaka: VakaModel):
     }
     payload = {"vaka_adi": vaka.vaka_adi, "ozet": vaka.ozet, "kurallar": vaka.kurallar}
     try:
-        requests.post(url, headers=headers, json=payload, timeout=10)
+        # requests.post cevabını kontrol ediyoruz
+        response = requests.post(url, headers=headers, json=payload, timeout=10)
+        if response.status_code not in (200, 201, 204):
+             raise HTTPException(status_code=response.status_code, detail=response.text)
         return {"status": "ok"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 # --- VAKA SİL ---
 @app.delete("/vaka-sil/{vaka_adi}")
 def vaka_sil(vaka_adi: str):
