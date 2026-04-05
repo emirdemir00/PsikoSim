@@ -111,7 +111,7 @@ export default function PsikoSimMaster() {
           kurallar: formData.get("kurallar")
         };
 
-        await fetch(`https://psikosim-backend.onrender.com//vaka-guncelle`, {
+        await fetch(`https://psikosim-backend.onrender.com/vaka-guncelle`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(guncelVeri)
@@ -124,7 +124,7 @@ export default function PsikoSimMaster() {
           ozet: formData.get("ozet"),
           kurallar: formData.get("kurallar")
         };
-        await fetch("https://psikosim-backend.onrender.com//vaka-ekle", {
+        await fetch("https://psikosim-backend.onrender.com/vaka-ekle", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(vakaVerisi)
