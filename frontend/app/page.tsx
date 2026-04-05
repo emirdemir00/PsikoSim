@@ -742,16 +742,12 @@ export default function PsikoSimMaster() {
                  <div className="bg-white rounded-[40px] p-10 border border-slate-100 shadow-sm flex flex-col md:flex-row items-center justify-between gap-12 mt-12">
                     <div className="max-w-2xl">
                        <h3 className="text-2xl font-bold text-[#1E293B] mb-4">Vizyonumuz</h3>
-                       <p className="text-slate-600 leading-relaxed font-medium">Psiko-Sim Laboratuvarı ekibi olarak, her klinik vakada insan hikayesini merkeze alıyoruz. Geliştirdiğimiz her kod satırı ve yazdığımız her vaka senaryosu, daha donanımlı profesyoneller yetiştirmek için.</p>
+                       <p className="text-slate-600 leading-relaxed font-medium">Psiko-Sim Laboratuvarı ekibi olarak, her klinik vakada insan hikayesini merkeze alıyoruz.</p>
                     </div>
                     <div className="flex gap-4">
                        <div className="bg-[#F8FAFC] p-6 rounded-3xl text-center min-w-[120px] border border-slate-50">
-                          <p className="text-3xl font-black text-[#3E34FA]">5+</p>
-                          <p className="text-[10px] font-bold text-slate-400 uppercase mt-1">Yıllık Ar-Ge</p>
                        </div>
                        <div className="bg-[#F8FAFC] p-6 rounded-3xl text-center min-w-[120px] border border-slate-50">
-                          <p className="text-3xl font-black text-[#3E34FA]">12k</p>
-                          <p className="text-[10px] font-bold text-slate-400 uppercase mt-1">Simülasyon</p>
                        </div>
                     </div>
                  </div>
