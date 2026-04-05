@@ -611,8 +611,8 @@ export default function PsikoSimMaster() {
                  <div className="flex-1 p-8 space-y-8">
                    <div className="bg-gradient-to-r from-[#2111E7] to-[#4537F3] rounded-[32px] p-12 text-white shadow-xl relative overflow-hidden">
                      <div className="relative z-10 max-w-2xl">
-                       <h1 className="text-4xl font-bold mb-4 leading-snug">Psikolog adayları için geliştirilmiş sanal danışan simülasyonu</h1>
-                       <p className="text-indigo-100 text-base mb-8 opacity-90">Teorik bilginizi pratikle buluşturun. Güvenli bir ortamda gerçek vaka deneyimleri yaşayın.</p>
+                       <h1 className="text-4xl font-bold mb-4 leading-snug">Psikolog Adayları İçin Geliştirilmiş Sanal Danışan Simülasyonu</h1>
+                       <p className="text-indigo-100 text-base mb-8 opacity-90">Teorik bilginizi pratikle buluşturun, güvenli bir ortamda gerçek vaka deneyimleri yaşayın.</p>
                        <div className="flex gap-4">
                           <button onClick={() => setActivePage('library')} className="bg-white text-[#3E34FA] px-8 py-3.5 rounded-full font-bold text-sm shadow-lg flex items-center gap-2 hover:scale-105 transition-all">▶ Vaka Seç ve Başla</button>
                        </div>
@@ -622,7 +622,7 @@ export default function PsikoSimMaster() {
                    <div className="grid grid-cols-3 gap-6">
                      {[
                        { t: 'SİSTEM DURUMU', v: 'Çevrimiçi', d: 'Bağlantı Hazır', icon: '🟢', c: 'text-emerald-500', bc: 'border-emerald-400' },
-                       { t: 'KAYITLI VAKA', v: `${filteredVakalar.length} Danışan`, d: 'Veritabanı Senkronize', icon: '👤', c: 'text-[#3E34FA]', bc: 'border-[#3E34FA]' },
+                       { t: 'KAYITLI VAKA', v: `${filteredVakalar.length} Danışan`, d: 'Seans Bekliyor', icon: '👤', c: 'text-[#3E34FA]', bc: 'border-[#3E34FA]' },
                        { t: 'KLİNİK ODA', v: 'Müsait', d: 'Görüşmeye Hazır', icon: '🚪', c: 'text-slate-400', bc: 'border-[#3E34FA]' }
                      ].map((card, i) => (
                        <div key={i} className={`bg-white p-6 rounded-[24px] shadow-sm border-l-4 ${card.bc}`}>
@@ -694,8 +694,8 @@ export default function PsikoSimMaster() {
                  </div>
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                    {[
-                     { n: "Emir Demir", r: "Geliştirici", g: "Yeni Medya ve YBS Öğrencisi", d: "Teknolojik inovasyon ve veri sistemleri üzerine uzmanlaşan Emir, platformun teknik altyapısını ve interaktif simülasyon motorlarını yönetiyor.", l: "https://www.linkedin.com/in/itsemirdemir/" },
-                     { n: "Ebru Demir", r: "Vaka Yazarı", g: "Psikoloji Mezunu", d: "Ebru, klinik deneyimlerini ve psikolojik teorileri simülasyon senaryolarına dönüştürerek kullanıcıların gerçekçi vaka analizleri yapmasını sağlıyor.", l: "https://www.linkedin.com/in/ebru-demir-81a531369/" }
+                     { n: "Emir Demir", r: "Yeni Medya ve YBS Öğrencisi", g: "Geliştirici ve Kurucu", d: "Yapay zeka ile üretime ve projelere yönelen Emir, platformun teknik altyapısını ve interaktif simülasyon motorlarını yönetiyor.", l: "https://www.linkedin.com/in/itsemirdemir/" },
+                     { n: "Ebru Demir", r: "Psikoloji Mezunu", g: "Vaka Yazarı", d: "Ebru, psikolojik teorileri simülasyon senaryolarına dönüştürerek kullanıcıların gerçekçi vaka analizleri yapmasını sağlıyor.", l: "https://www.linkedin.com/in/ebru-demir-81a531369/" }
                    ].map((u, i) => (
                      <div key={i} className="bg-white rounded-[24px] p-8 border border-slate-100 shadow-md border-t-[6px] border-t-[#3E34FA] flex flex-col hover:shadow-lg transition-all">
                        <div className="flex items-center gap-4 mb-6">
