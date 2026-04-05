@@ -287,11 +287,11 @@ export default function PsikoSimMaster() {
 
   // --- ORTAK ÜST HEADER (YENİ SVG TASARIM) ---
   const TopHeader = () => (
-    <header className="h-[90px] bg-[#F8FAFC] flex items-center justify-between px-10 shrink-0 sticky top-0 z-40">
+    <header className="h-[90px] bg-[#F8FAFC] flex items-center justify-between px-10 shrink-0 sticky top-0 z-40 border-b border-slate-100">
       <div className="flex-1 flex items-center gap-6">
          {activePage !== 'chat-session' && (
            <div className="relative w-[400px] hidden md:block">
-             <svg className="absolute left-4 top-3 w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+             <svg className="absolute left-4 top-3.5 w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
              <input 
                value={searchTerm}
                onChange={(e) => setSearchTerm(e.target.value)}
@@ -354,10 +354,11 @@ export default function PsikoSimMaster() {
         </div>
       )}
 
-      {/* CHAT SESSION */}
+      {/* CHAT SESSION (3 KOLONLU GÖRÜNÜM) */}
       {activePage === 'chat-session' ? (
          <div className="flex w-full h-full bg-white relative">
             
+            {/* CHAT İÇİ POP-UP MENÜLERİ */}
             {chatPopup && (
                 <div className="absolute inset-0 bg-white/95 z-30 flex flex-col p-12 animate-in fade-in">
                     <div className="flex justify-between items-center mb-8 border-b pb-4">
@@ -568,15 +569,26 @@ export default function PsikoSimMaster() {
               { id: 'dashboard', name: 'Simülasyon Lab', icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /> },
               { id: 'library', name: 'Vaka Kütüphanesi', icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /> },
               { id: 'team', name: 'Ekip', icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /> },
-              { id: 'admin', name: 'Ayarlar', icon: <><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></> }
+              { id: 'about', name: 'Proje Hakkında', icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /> }
             ].map((item) => (
               <button key={item.id} onClick={() => setActivePage(item.id)} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-full text-[14px] font-semibold transition-all ${activePage === item.id ? 'bg-[#3E34FA] text-white shadow-md' : 'text-[#64748B] hover:bg-slate-100 hover:text-[#1E293B]'}`}>
                 <svg className="w-5 h-5 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">{item.icon}</svg>
                 {item.name}
               </button>
             ))}
+            
+            {/* YETKİLİ PANELİ (EN ALTTA, ESKİSİ GİBİ AYRI) */}
+            <div className="mt-auto pt-10 pb-2">
+               <button onClick={() => setActivePage('admin')} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-full text-[14px] font-semibold transition-all ${activePage === 'admin' ? 'bg-slate-200 text-[#1E293B] shadow-sm' : 'text-[#64748B] hover:bg-slate-100 hover:text-[#1E293B]'}`}>
+                 <svg className="w-5 h-5 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                 </svg>
+                 Yetkili Paneli
+               </button>
+            </div>
           </nav>
 
+          {/* ALT KISIM (YENİ SİMÜLASYON BUTONU VE DESTEK) */}
           <div className="p-6 space-y-4">
             <button onClick={() => setActivePage('library')} className="w-full py-3.5 bg-[#3E34FA] text-white rounded-full font-bold text-sm shadow-md hover:bg-[#2B24C0] transition-all flex items-center justify-center gap-2">
               <span className="text-lg">+</span> Yeni Simülasyon
@@ -593,6 +605,7 @@ export default function PsikoSimMaster() {
 
            <div className="flex-1 overflow-y-auto">
              
+             {/* 1. DASHBOARD */}
              {activePage === 'dashboard' && (
                <div className="flex h-full animate-in fade-in duration-300">
                  <div className="flex-1 p-8 space-y-8">
@@ -638,6 +651,7 @@ export default function PsikoSimMaster() {
                </div>
              )}
 
+             {/* 2. VAKA KÜTÜPHANESİ */}
              {activePage === 'library' && (
                <div className="p-8 space-y-8 animate-in fade-in duration-300">
                   <div className="max-w-3xl">
@@ -671,6 +685,7 @@ export default function PsikoSimMaster() {
                </div>
              )}
 
+             {/* 3. EKİP ÜYELERİ */}
              {activePage === 'team' && (
                <div className="p-12 space-y-12 animate-in fade-in duration-300">
                  <div className="max-w-3xl">
@@ -699,6 +714,7 @@ export default function PsikoSimMaster() {
                </div>
              )}
 
+             {/* 4. PROJE HAKKINDA */}
              {activePage === 'about' && (
                <div className="p-12 space-y-8 animate-in fade-in duration-300">
                   <div className="bg-[#3E34FA] rounded-[32px] p-16 text-white flex justify-between items-center shadow-xl relative overflow-hidden">
@@ -724,6 +740,7 @@ export default function PsikoSimMaster() {
                </div>
              )}
 
+             {/* 5. YETKİLİ PANELİ (ADMIN) */}
              {activePage === 'admin' && (
                 <div className="flex-1 flex flex-col h-full animate-in fade-in duration-300">
                    {!isAdminAuth ? (
