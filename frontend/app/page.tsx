@@ -685,35 +685,78 @@ export default function PsikoSimMaster() {
                </div>
              )}
 
-             {/* 3. EKİP ÜYELERİ */}
+             {/* 3. EKİP ÜYELERİ (TASARIM GÜNCELLENDİ - METİNLER KORUNDU) */}
              {activePage === 'team' && (
-               <div className="p-12 space-y-12 animate-in fade-in duration-300">
+               <div className="p-12 space-y-12 animate-in fade-in duration-500 max-w-7xl mx-auto">
                  <div className="max-w-3xl">
-                   <h1 className="text-4xl font-bold text-[#3E34FA] mb-4">Ekip Üyeleri</h1>
-                   <p className="text-lg text-[#A3AED0] font-medium leading-relaxed">Psiko-Sim Laboratuvarı, teknolojiyi ve psikolojiyi bir araya getirerek yarının klinik eğitimini bugün inşa ediyor. Empati odaklı yaklaşımımızla dijital simülasyonların sınırlarını zorluyoruz.</p>
+                   <h1 className="text-4xl font-bold text-[#1E293B] mb-4">Ekip Üyeleri</h1>
+                   <p className="text-lg text-[#64748B] font-medium leading-relaxed">Psiko-Sim Laboratuvarı, teknolojiyi ve psikolojiyi bir araya getirerek yarının klinik eğitimini bugün inşa ediyor. Empati odaklı yaklaşımımızla dijital simülasyonların sınırlarını zorluyoruz.</p>
                  </div>
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                    {[
-                     { n: "Emir Demir", r: "Yeni Medya ve YBS Öğrencisi", g: "Geliştirici ve Kurucu", d: "Yapay zeka ile üretime ve projelere yönelen Emir, platformun teknik altyapısını ve interaktif simülasyon motorlarını yönetiyor.", l: "https://www.linkedin.com/in/itsemirdemir/", imgUrl: "/emir.jpg" },
-                     { n: "Ebru Demir", r: "Psikoloji Mezunu", g: "Vaka Yazarı", d: "Ebru, psikolojik teorileri simülasyon senaryolarına dönüştürerek kullanıcıların gerçekçi vaka analizleri yapmasını sağlıyor.", l: "https://www.linkedin.com/in/ebru-demir-81a531369/", imgUrl: "/ebru.jpg" }
+                     { n: "Emir Demir", r: "Yeni Medya ve YBS Öğrencisi", g: "Geliştirici ve Kurucu", d: "Yapay zeka ile üretime ve projelere yönelen Emir, platformun teknik altyapısını ve interaktif simülasyon motorlarını yönetiyor.", l: "https://www.linkedin.com/in/itsemirdemir/", img: "/emir.jpg" },
+                     { n: "Ebru Demir", r: "Psikoloji Mezunu", g: "Vaka Yazarı", d: "Ebru, psikolojik teorileri simülasyon senaryolarına dönüştürerek kullanıcıların gerçekçi vaka analizleri yapmasını sağlıyor.", l: "https://www.linkedin.com/in/ebru-demir-81a531369/", img: "/ebru.jpg" }
                    ].map((u, i) => (
-                     <div key={i} className="bg-white rounded-[24px] p-8 border border-slate-100 shadow-md border-t-[6px] border-t-[#3E34FA] flex flex-col hover:shadow-lg transition-all">
-                       <div className="flex items-center gap-4 mb-6">
-                          <div className="w-16 h-16 bg-slate-200 rounded-full flex items-center justify-center font-bold text-xl text-slate-500 overflow-hidden shadow-inner">{u.n[0]}</div>
-                          <div><h3 className="text-lg font-bold text-[#2B3674]">{u.n}</h3><p className="text-xs font-bold text-[#3E34FA]">{u.r}</p></div>
+                     <div key={i} className="bg-white rounded-[32px] p-8 border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 group relative overflow-hidden flex flex-col">
+                       <div className="absolute top-0 left-0 w-full h-1.5 bg-[#3E34FA] opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                       
+                       <div className="flex flex-col items-center text-center mb-6">
+                          <div className="w-32 h-32 bg-slate-100 rounded-[32px] mb-4 overflow-hidden shadow-inner border-4 border-white">
+                             <img 
+                                src={u.img} 
+                                alt={u.n} 
+                                className="w-full h-full object-cover" 
+                                onError={(e:any) => { e.target.src=`https://api.dicebear.com/7.x/notionists/svg?seed=${u.n}` }} 
+                             />
+                          </div>
+                          <h3 className="text-xl font-bold text-[#1E293B]">{u.n}</h3>
+                          <p className="text-[11px] font-bold text-[#3E34FA] uppercase tracking-widest mt-1">{u.r}</p>
                        </div>
-                       <div className="flex-1 mb-6">
-                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">GÖREV</p>
-                          <p className="text-sm font-bold text-slate-800 mb-4">{u.g}</p>
-                          <p className="text-sm text-slate-500 leading-relaxed">{u.d}</p>
+
+                       <div className="space-y-4 flex-1 flex flex-col">
+                          <div>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">GÖREV</p>
+                            <p className="text-sm font-bold text-slate-700 leading-tight">{u.g}</p>
+                          </div>
+                          <p className="text-sm text-slate-500 leading-relaxed flex-1">{u.d}</p>
+                          
+                          <a href={u.l} target="_blank" rel="noreferrer" className="flex items-center justify-center gap-2 w-full py-3 bg-slate-50 text-[#3E34FA] rounded-2xl font-bold text-sm hover:bg-[#3E34FA] hover:text-white transition-all">
+                             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.761 0 5-2.239 5-5v-14c0-2.761-2.239-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                             LinkedIn Profili
+                          </a>
                        </div>
-                       <a href={u.l} target="_blank" rel="noreferrer" className="w-full py-3 border-2 border-indigo-50 text-[#3E34FA] rounded-xl font-bold text-sm hover:bg-[#F4F7FE] transition-all flex justify-center items-center gap-2">🔗 LinkedIn Profili</a>
                      </div>
                    ))}
+
+                   {/* EKİBE KATILIN KARTI (IMAGE 7 DETAYI) */}
+                   <div className="border-2 border-dashed border-slate-200 rounded-[32px] p-8 flex flex-col items-center justify-center text-center space-y-4 hover:border-[#3E34FA] transition-colors cursor-pointer group">
+                      <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">✨</div>
+                      <h3 className="text-lg font-bold text-[#1E293B]">Ekibe Katılın</h3>
+                      <p className="text-xs text-slate-500 font-medium px-4">Psikoloji ve teknolojinin kesişiminde fark yaratmak ister misiniz?</p>
+                      <button className="text-[#3E34FA] font-bold text-sm hover:underline">Açık Pozisyonları İncele</button>
+                   </div>
+                 </div>
+
+                 {/* VİZYONUMUZ KARTI (ALT KISIM) */}
+                 <div className="bg-white rounded-[40px] p-10 border border-slate-100 shadow-sm flex flex-col md:flex-row items-center justify-between gap-12 mt-12">
+                    <div className="max-w-2xl">
+                       <h3 className="text-2xl font-bold text-[#1E293B] mb-4">Vizyonumuz</h3>
+                       <p className="text-slate-600 leading-relaxed font-medium">Psiko-Sim Laboratuvarı ekibi olarak, her klinik vakada insan hikayesini merkeze alıyoruz. Geliştirdiğimiz her kod satırı ve yazdığımız her vaka senaryosu, daha donanımlı profesyoneller yetiştirmek için.</p>
+                    </div>
+                    <div className="flex gap-4">
+                       <div className="bg-[#F8FAFC] p-6 rounded-3xl text-center min-w-[120px] border border-slate-50">
+                          <p className="text-3xl font-black text-[#3E34FA]">5+</p>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase mt-1">Yıllık Ar-Ge</p>
+                       </div>
+                       <div className="bg-[#F8FAFC] p-6 rounded-3xl text-center min-w-[120px] border border-slate-50">
+                          <p className="text-3xl font-black text-[#3E34FA]">12k</p>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase mt-1">Simülasyon</p>
+                       </div>
+                    </div>
                  </div>
                </div>
              )}
-
              {/* 4. PROJE HAKKINDA */}
              {activePage === 'about' && (
                <div className="p-12 space-y-8 animate-in fade-in duration-300">
