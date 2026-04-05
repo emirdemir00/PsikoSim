@@ -82,7 +82,6 @@ export default function PsikoSimMaster() {
   };
 
   const handleAdminLogin = () => {
-    // Şifre artık nisanyagmuru oldu
     if (adminPassword.trim().toLowerCase() === "nisanyagmuru") {
       setIsAdminAuth(true);
       setAdminPassword("");
@@ -95,9 +94,6 @@ export default function PsikoSimMaster() {
     setIsAdminAuth(false);
     setActivePage('dashboard');
   };
-
-  // Vaka Kaydet (Güncelleme Sorunu JSON Paketiyle Çözüldü)
-  // --- page.tsx İÇİNDEKİ SADECE DEĞİŞEN FONKSİYONLAR ---
 
   const handleVakaKaydet = async (e: any) => {
     e.preventDefault();
@@ -112,7 +108,7 @@ export default function PsikoSimMaster() {
           kurallar: formData.get("kurallar")
         };
 
-        await fetch(`https://psikosim-backend.onrender.com/vaka-guncelle`, { // SLASH DÜZELTİLDİ
+        await fetch(`https://psikosim-backend.onrender.com/vaka-guncelle`, { 
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(guncelVeri)
@@ -124,7 +120,7 @@ export default function PsikoSimMaster() {
           ozet: formData.get("ozet"),
           kurallar: formData.get("kurallar")
         };
-        await fetch("https://psikosim-backend.onrender.com/vaka-ekle", { // SLASH DÜZELTİLDİ
+        await fetch("https://psikosim-backend.onrender.com/vaka-ekle", { 
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(vakaVerisi)
@@ -132,7 +128,7 @@ export default function PsikoSimMaster() {
       }
       vakaYukle(); 
       e.target.reset();
-      alert("İşlem Başarılı!"); // Geri bildirim ekledim ki çalıştığını anla
+      alert("İşlem Başarılı!"); 
     } catch (err) {
       console.error(err);
       alert("Bir hata oluştu.");
@@ -153,15 +149,14 @@ export default function PsikoSimMaster() {
     }
   };
 
-  // YENİ: Test Modundayken Canlı Promptu Veritabanına Kaydetme
   const handleTesttenKaydet = async () => {
     if(!currentVaka) return;
     try {
       const guncelVeri = {
         eski_vaka_adi: currentVaka.vaka_adi,
-        yeni_vaka_adi: currentVaka.vaka_adi, // İsim değişmiyor
-        ozet: currentVaka.ozet, // Özet değişmiyor
-        kurallar: currentVaka.kurallar // Yalnızca güncel kurallar gidiyor
+        yeni_vaka_adi: currentVaka.vaka_adi, 
+        ozet: currentVaka.ozet, 
+        kurallar: currentVaka.kurallar 
       };
       const res = await fetch(`https://psikosim-backend.onrender.com/vaka-guncelle`, {
         method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(guncelVeri)
@@ -173,7 +168,6 @@ export default function PsikoSimMaster() {
     } catch(err) { alert("Bağlantı hatası!"); }
   };
 
-  // Ses Kaydı (Mikrofon Butonu)
   const toggleRecording = async () => {
     if (isRecording && mediaRecorderRef.current) {
         mediaRecorderRef.current.stop();
@@ -195,7 +189,7 @@ export default function PsikoSimMaster() {
                     const res = await fetch("https://psikosim-backend.onrender.com/ses-isleme", { method: "POST", body: formData });
                     const data = await res.json();
                     if (data.text) {
-                        mesajIlet(data.text, true); // Sesli mod AKTİF
+                        mesajIlet(data.text, true); 
                     }
                 } catch (err) { console.error("Ses işleme hatası", err); }
                 stream.getTracks().forEach(track => track.stop());
@@ -207,7 +201,6 @@ export default function PsikoSimMaster() {
     }
   };
 
-  // Chat Gönderim (Yazılı veya Sesli)
   const mesajIlet = async (text: string, voiceMode: boolean) => {
      if(!text.trim()) return;
      
@@ -216,11 +209,8 @@ export default function PsikoSimMaster() {
      setInput("");
 
      const apiGecmis = mesajlar.map(m => ({ role: m.role, content: m.content }));
-     
-     // currentVaka.kurallar artık test modundayken anlık güncelleniyor!
      const vakaKurallari = currentVaka ? currentVaka.kurallar : "Sen bir danışansın.";
      
-     // 5.4 NANO İÇİN ÖZEL, SERT KARAKTER PROMPTU
      const systemPrompt = `SENİN KİMLİĞİN: ${vakaKurallari}
      
      KESİN EMİRLER:
@@ -253,7 +243,6 @@ export default function PsikoSimMaster() {
               time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) 
            }]);
 
-           // Ses sadece mikrofonla konuşulmuşsa çalar
            if (voiceMode && data.audio_base64) {
               const audio = new Audio(data.audio_base64);
               audio.play();
@@ -264,21 +253,19 @@ export default function PsikoSimMaster() {
      }
   };
 
-  // Normal Seans Başlatma (Metrikler Açık)
   const startSession = (vaka: any) => {
     setCurrentVaka(vaka);
     setMesajlar([]);
     setChatPopup(null);
-    setIsTestMode(false); // Normal mod
+    setIsTestMode(false); 
     setActivePage('chat-session');
   };
 
-  // YENİ: Test Seansı Başlatma (Canlı Prompt Editörü Açık)
   const startTestSession = (vaka: any) => {
     setCurrentVaka(vaka);
     setMesajlar([]);
     setChatPopup(null);
-    setIsTestMode(true); // Test modu aktif
+    setIsTestMode(true); 
     setActivePage('chat-session');
   };
 
@@ -296,51 +283,52 @@ export default function PsikoSimMaster() {
     setShowProfileModal(false);
   };
 
-  // Arama Barı Filtreleme
   const filteredVakalar = vakalar.filter(v => (v.vaka_adi || "").toLowerCase().includes(searchTerm.toLowerCase()));
 
-  // --- ORTAK ÜST HEADER ---
+  // --- ORTAK ÜST HEADER (YENİ SVG TASARIM) ---
   const TopHeader = () => (
-    <header className="h-20 bg-white border-b border-slate-100 flex items-center justify-between px-10 shrink-0 sticky top-0 z-40">
-      <div className="flex items-center gap-6">
-         {activePage === 'chat-session' ? (
-             <div className="flex items-center gap-8 text-sm font-bold text-[#3E34FA]">
-                 <span>{currentVaka?.vaka_adi} - {isTestMode ? 'Laboratuvar Test Modu' : 'Canlı Seans'}</span>
-             </div>
-         ) : (
-             <h2 className="text-xl font-bold text-slate-800 tracking-tight">
-                {activePage === 'dashboard' && 'Psiko-Sim Laboratuvarı'}
-                {activePage === 'library' && 'Vaka Kütüphanesi'}
-                {activePage === 'team' && 'Ekip Üyeleri'}
-                {activePage === 'about' && 'Proje Hakkında'}
-                {activePage === 'admin' && 'Yetkili Paneli'}
-             </h2>
+    <header className="h-[90px] bg-[#F8FAFC] flex items-center justify-between px-10 shrink-0 sticky top-0 z-40">
+      <div className="flex-1 flex items-center gap-6">
+         {activePage !== 'chat-session' && (
+           <div className="relative w-[400px] hidden md:block">
+             <svg className="absolute left-4 top-3 w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+             <input 
+               value={searchTerm}
+               onChange={(e) => setSearchTerm(e.target.value)}
+               placeholder="Simülasyon veya vaka ara..." 
+               className="w-full bg-white border border-slate-200 rounded-full py-3 px-12 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#3E34FA] text-slate-700 shadow-sm" 
+             />
+           </div>
          )}
       </div>
+
       <div className="flex items-center gap-6">
-        <div className="relative w-80 hidden md:block">
-          <span className="absolute left-4 top-2.5 text-slate-400 text-sm">🔍</span>
-          <input 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Vaka veya doküman ara..." 
-            className="w-full bg-[#F4F7FE] border-none rounded-full py-2.5 px-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#3E34FA] text-slate-600" 
-          />
-        </div>
-        <div className="flex items-center gap-4 border-l border-slate-100 pl-6">
-          <button className="text-slate-400 hover:text-slate-600">🔔</button>
-          <button className="text-slate-400 hover:text-slate-600">❓</button>
-          
-          {userName && (
-              <div className="flex items-center gap-3">
-                 <div className="text-right hidden md:block">
-                    <p className="text-sm font-bold text-slate-800 leading-tight">{userName}</p>
-                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{userTitle}</p>
-                 </div>
-                 <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center text-white font-bold shadow-md">{userInitials}</div>
-              </div>
-          )}
-        </div>
+        <button className="text-slate-400 hover:text-slate-600 relative">
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+          <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+        </button>
+        
+        <div className="h-8 w-px bg-slate-200"></div> 
+        
+        {userName ? (
+            <div className="flex items-center gap-3 cursor-pointer">
+               <div className="text-right hidden md:block">
+                  <p className="text-sm font-bold text-[#1E293B] leading-tight">{userName}</p>
+                  <p className="text-[10px] text-[#64748B] font-bold uppercase tracking-widest">{userTitle}</p>
+               </div>
+               <div className="w-10 h-10 bg-[#1E293B] rounded-full flex items-center justify-center text-white font-bold shadow-md">{userInitials}</div>
+            </div>
+        ) : (
+            <div className="flex items-center gap-3 cursor-pointer" onClick={() => setShowProfileModal(true)}>
+               <div className="text-right hidden md:block">
+                  <p className="text-sm font-bold text-[#1E293B] leading-tight">Ziyaretçi</p>
+                  <p className="text-[10px] text-[#64748B] font-bold uppercase tracking-widest">Klinik Psikolog</p>
+               </div>
+               <div className="w-10 h-10 bg-slate-200 rounded-full flex items-center justify-center text-slate-500 font-bold shadow-sm">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+               </div>
+            </div>
+        )}
       </div>
     </header>
   );
@@ -366,11 +354,10 @@ export default function PsikoSimMaster() {
         </div>
       )}
 
-      {/* CHAT SESSION (3 KOLONLU GÖRÜNÜM) */}
+      {/* CHAT SESSION */}
       {activePage === 'chat-session' ? (
          <div className="flex w-full h-full bg-white relative">
             
-            {/* CHAT İÇİ POP-UP MENÜLERİ */}
             {chatPopup && (
                 <div className="absolute inset-0 bg-white/95 z-30 flex flex-col p-12 animate-in fade-in">
                     <div className="flex justify-between items-center mb-8 border-b pb-4">
@@ -511,7 +498,6 @@ export default function PsikoSimMaster() {
                </div>
             </section>
 
-            {/* YENİ: EĞER TEST MODUNDAYSAN CANLI EDİTÖR AÇILIR, DEĞİLSEN NORMAL METRİKLER */}
             {isTestMode ? (
                <aside className="w-[360px] bg-[#F8F9FB] p-6 flex flex-col gap-4 overflow-y-auto shrink-0 z-10 border-l border-slate-200">
                   <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 border-t-4 border-t-blue-500 flex-1 flex flex-col">
@@ -564,50 +550,49 @@ export default function PsikoSimMaster() {
             )}
          </div>
       ) : (
-      /* CHAT DIŞINDAKİ SAYFALAR (DASHBOARD, KÜTÜPHANE VB.) */
+      /* CHAT DIŞINDAKİ SAYFALAR (YENİ SVG MENÜ) */
       <>
-         <aside className="w-[280px] bg-white border-r border-slate-100 flex flex-col p-6 shrink-0 z-50 shadow-sm">
-           <div className="flex items-center gap-4 mb-10 px-2 cursor-pointer" onClick={() => setActivePage('dashboard')}>
-             <div className="w-12 h-12 bg-[#3E34FA] rounded-2xl flex items-center justify-center text-white font-black text-2xl shadow-lg shadow-indigo-200">🧠</div>
-             <div>
-               <h2 className="text-xl font-bold leading-none text-[#2B3674] tracking-tight">Psiko-Sim</h2>
-               <p className="text-[10px] text-[#A3AED0] font-bold uppercase tracking-widest mt-1">Laboratuvar Paneli</p>
-             </div>
-           </div>
+        <aside className="w-[260px] bg-[#F8FAFC] border-r border-slate-200 flex flex-col shrink-0 z-50">
+          <div className="flex items-center gap-3 p-8 cursor-pointer" onClick={() => setActivePage('dashboard')}>
+            <div className="w-10 h-10 bg-[#3E34FA] rounded-xl flex items-center justify-center text-white shadow-lg">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+            </div>
+            <div>
+              <h2 className="text-xl font-bold leading-none text-[#1E293B]">Psiko-Sim</h2>
+              <p className="text-[10px] text-[#64748B] font-bold uppercase tracking-widest mt-1">Laboratuvarı</p>
+            </div>
+          </div>
 
-           <nav className="flex-1 flex flex-col space-y-2">
-             {[
-        { id: 'dashboard', name: 'Simülasyon Lab', icon: '🧪' },
-        { id: 'library', name: 'Vaka Kütüphanesi', icon: '📚' },
-        { id: 'team', name: 'Ekip', icon: '👥' },
-        { id: 'about', name: 'Proje Hakkında', icon: 'ℹ️' },
-      ].map((item) => (
-        <button 
-          key={item.id} 
-          onClick={() => setActivePage(item.id)} 
-          className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
-            activePage === item.id 
-              ? 'bg-[#3E34FA] text-white shadow-md shadow-indigo-200' 
-              : 'text-[#64748B] hover:bg-slate-50 hover:text-[#1E293B]'
-          }`}
-        >
-          <span className="text-lg opacity-90">{item.icon}</span> {item.name}
-        </button>
-      ))}
-             <div className="mt-auto pt-10 space-y-2">
-                <button onClick={() => setActivePage('admin')} className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${activePage === 'admin' ? 'bg-slate-100 text-[#1E293B] shadow-sm' : 'text-[#64748B] hover:bg-slate-50 hover:text-[#1E293B]'}`}>
-  <span className="text-lg opacity-90">🛠️</span> Yetkili Paneli
-</button>
-             </div>
-           </nav>
-         </aside>
+          <nav className="flex-1 flex flex-col px-4 space-y-1 mt-4">
+            {[
+              { id: 'dashboard', name: 'Simülasyon Lab', icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /> },
+              { id: 'library', name: 'Vaka Kütüphanesi', icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /> },
+              { id: 'team', name: 'Ekip', icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /> },
+              { id: 'admin', name: 'Ayarlar', icon: <><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></> }
+            ].map((item) => (
+              <button key={item.id} onClick={() => setActivePage(item.id)} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-full text-[14px] font-semibold transition-all ${activePage === item.id ? 'bg-[#3E34FA] text-white shadow-md' : 'text-[#64748B] hover:bg-slate-100 hover:text-[#1E293B]'}`}>
+                <svg className="w-5 h-5 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">{item.icon}</svg>
+                {item.name}
+              </button>
+            ))}
+          </nav>
+
+          <div className="p-6 space-y-4">
+            <button onClick={() => setActivePage('library')} className="w-full py-3.5 bg-[#3E34FA] text-white rounded-full font-bold text-sm shadow-md hover:bg-[#2B24C0] transition-all flex items-center justify-center gap-2">
+              <span className="text-lg">+</span> Yeni Simülasyon
+            </button>
+            <button className="w-full flex items-center gap-3 px-4 py-3 text-[14px] font-semibold text-[#64748B] hover:text-[#1E293B] transition-all">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              Yardım Merkezi
+            </button>
+          </div>
+        </aside>
 
          <section className="flex-1 flex flex-col min-w-0">
            <TopHeader />
 
            <div className="flex-1 overflow-y-auto">
              
-             {/* 1. DASHBOARD */}
              {activePage === 'dashboard' && (
                <div className="flex h-full animate-in fade-in duration-300">
                  <div className="flex-1 p-8 space-y-8">
@@ -653,7 +638,6 @@ export default function PsikoSimMaster() {
                </div>
              )}
 
-             {/* 2. VAKA KÜTÜPHANESİ */}
              {activePage === 'library' && (
                <div className="p-8 space-y-8 animate-in fade-in duration-300">
                   <div className="max-w-3xl">
@@ -687,7 +671,6 @@ export default function PsikoSimMaster() {
                </div>
              )}
 
-             {/* 3. EKİP ÜYELERİ */}
              {activePage === 'team' && (
                <div className="p-12 space-y-12 animate-in fade-in duration-300">
                  <div className="max-w-3xl">
@@ -716,7 +699,6 @@ export default function PsikoSimMaster() {
                </div>
              )}
 
-             {/* 4. PROJE HAKKINDA */}
              {activePage === 'about' && (
                <div className="p-12 space-y-8 animate-in fade-in duration-300">
                   <div className="bg-[#3E34FA] rounded-[32px] p-16 text-white flex justify-between items-center shadow-xl relative overflow-hidden">
@@ -742,7 +724,6 @@ export default function PsikoSimMaster() {
                </div>
              )}
 
-             {/* 5. YETKİLİ PANELİ (ADMIN) */}
              {activePage === 'admin' && (
                 <div className="flex-1 flex flex-col h-full animate-in fade-in duration-300">
                    {!isAdminAuth ? (
@@ -800,10 +781,7 @@ export default function PsikoSimMaster() {
                                         </div>
                                         <div className="flex gap-2">
                                            <button onClick={() => setDuzenlenenVaka(v)} className="px-4 py-2 bg-amber-50 text-amber-600 rounded-lg text-xs font-bold hover:bg-amber-100">Düzenle</button>
-                                           
-                                           {/* YENİ EKLENEN TEST ET BUTONU */}
                                            <button onClick={() => startTestSession(v)} className="px-4 py-2 bg-blue-50 text-blue-600 rounded-lg text-xs font-bold hover:bg-blue-100">Test Et</button>
-                                           
                                            <button onClick={() => handleVakaSil(v.vaka_adi)} className="px-4 py-2 bg-red-50 text-red-500 rounded-lg text-xs font-bold hover:bg-red-100">Sil</button>
                                         </div>
                                      </div>
