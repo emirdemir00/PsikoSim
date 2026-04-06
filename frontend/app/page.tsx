@@ -601,10 +601,15 @@ export default function PsikoSimMaster() {
              )}
              {activePage === 'about' && (
                <div className="p-4 md:p-12 space-y-6 md:space-y-8 animate-in fade-in duration-300">
-                  <div className="bg-[#3E34FA] rounded-[24px] md:rounded-[32px] p-8 md:p-16 text-white relative overflow-hidden"><h1 className="text-3xl md:text-5xl font-bold mb-3 md:mb-4">Proje Hakkında</h1><p className="text-sm md:text-xl text-indigo-100 font-medium max-w-2xl">Psiko-Sim, klinik psikoloji eğitimini dijital bir laboratuvara dönüştüren simülasyon platformudur.</p></div>
+                  <div className="bg-[#3E34FA] rounded-[24px] md:rounded-[32px] p-8 md:p-16 text-white relative overflow-hidden"><h1 className="text-3xl md:text-5xl font-bold mb-3 md:mb-4">Proje Hakkında</h1><p className="text-sm md:text-xl text-indigo-100 font-medium max-w-2xl">Psiko-Sim, klinik psikoloji eğitimini dijital bir laboratuvara dönüştüren simülasyon platformdur, psikolog adayları için gerçekçi ve etkili bir öğrenme deneyimi sunar.</p></div>
                   <div className="bg-white rounded-[24px] md:rounded-[32px] p-6 md:p-12 border-l-[6px] md:border-l-[8px] border-[#3E34FA] shadow-sm">
                     <div className="flex items-center gap-3 mb-6 md:mb-8"><div className="w-10 h-10 md:w-12 md:h-12 bg-red-50 text-red-500 rounded-xl flex items-center justify-center font-black shrink-0">!</div><h2 className="text-xl md:text-3xl font-bold text-[#2B3674]">Önemli Not</h2></div>
-                    <p className="text-sm md:text-base text-slate-700 font-bold mb-4">Bu proje psikolog adaylarının alıştırma yapmaları amacıyla hazırlanmıştır. İçerikler profesyonel tanı süreçlerinin yerini almaz.</p>
+                    <p className="text-sm md:text-base text-slate-700 font-bold mb-4">Bu uygulamada yer alan tüm vaka örnekleri ve karakterler tamamen kurgusal olup, herhangi bir gerçek kişiyle benzerlik göstermesi tesadüfidir. Vaka içerikleri; psikoloji öğrencileri, uzmanlar ve ilgili alanlarda eğitim alan bireyler için eğitim ve simülasyon amacıyla hazırlanmıştır.
+Bu uygulama, gerçek bir psikolojik danışmanlık veya terapi hizmeti sunmamaktadır ve bu amaçla kullanılmamalıdır. Uygulama içerisinde gerçekleştirilen simülasyonlar, terapötik sürecin birebir karşılığı olmayıp, yalnızca olası senaryolar üzerinden beceri geliştirmeyi desteklemeyi hedeflemektedir.
+Her bireyin yaşantısı, psikolojik yapısı ve terapi sürecine verdiği tepkiler farklıdır. Bu nedenle, burada sunulan vakalar ve olası müdahale yolları genellenebilir veya kesin doğrular olarak değerlendirilmemelidir.
+Uygulama içeriği, kullanıcıların klinik karar verme süreçlerinin yerini almaz. Tanı koyma, müdahale planlama ve tedavi süreçleri yalnızca yetkin ve lisanslı ruh sağlığı profesyonelleri tarafından yürütülmelidir.
+Eğer siz veya çevrenizdeki biri psikolojik destek ihtiyacı içindeyse, lütfen bir uzman psikolog, psikiyatrist veya ilgili sağlık profesyoneline başvurunuz.
+Uygulamanın kullanımından doğabilecek doğrudan veya dolaylı sonuçlardan geliştirici ekip sorumlu tutulamaz.</p>
                   </div>
                </div>
              )}
