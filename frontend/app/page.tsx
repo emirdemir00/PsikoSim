@@ -21,9 +21,24 @@ const translations = {
     skip: "Boş Bırak ve Devam Et",
     sysPrep: "Sistem Hazırlanıyor",
     sysWake: "Sunucu uyandırılıyor...",
-    heroTitle: "Psikolog Adayları İçin Geliştirilmiş Sanal Danışan Simülasyonu",
-    heroDesc: "Teorik bilginizi pratikle buluşturun, güvenli bir ortamda gerçek vaka deneyimleri yaşayın.",
-    startBtn: "▶ Vaka Seç ve Başla",
+    // YENİ EKLENEN ANA SAYFA ÇEVİRİLERİ (TR)
+    heroTitle: "Yapay Zeka Destekli Klinik Süpervizyon Simülatörü",
+    heroDesc: "Psikolog adayları için geliştirildi. Sesli veya yazılı olarak gerçekçi vakalarla görüşün, GPT tabanlı anlık klinik geri bildirim ve empati analizi alın.",
+    startBtn: "🚀 Simülasyona Başla",
+    feature1Title: "🎙️ Sesli veya Yazılı Terapi",
+    feature1Desc: "Whisper AI altyapısıyla danışanlarla gerçek zamanlı ve doğal iletişim kurun.",
+    feature2Title: "🧠 GPT Destekli Analiz",
+    feature2Desc: "Seans sonu terapötik ittifakınızı ve empati skorunuzu anında görün.",
+    feature3Title: "📈 Klinik Gelişim",
+    feature3Desc: "Gerçekçi senaryolarla risksiz ortamda klinik reflekslerinizi güçlendirin.",
+    howItWorks: "Nasıl Çalışır?",
+    step1: "1. Vaka Seç",
+    step1Desc: "Kütüphaneden size uygun senaryoyu belirleyin.",
+    step2: "2. Seansı Yönet",
+    step2Desc: "Danışanla etkileşime geçip müdahalelerde bulunun.",
+    step3: "3. Raporunu Al",
+    step3Desc: "Yapay zeka süpervizörden detaylı analiz ve skor alın.",
+    // ESKİ ÇEVİRİLER DEVAM EDİYOR
     sysStatus: "SİSTEM DURUMU",
     online: "Çevrimiçi",
     ready: "Bağlantı Hazır",
@@ -154,9 +169,24 @@ const translations = {
     skip: "Skip & Continue",
     sysPrep: "System Preparing",
     sysWake: "Waking up server...",
-    heroTitle: "Virtual Client Simulation for Psychology Students",
-    heroDesc: "Bridge theoretical knowledge with practice, experience real cases in a safe environment.",
-    startBtn: "▶ Select Case & Start",
+    // YENİ EKLENEN ANA SAYFA ÇEVİRİLERİ (EN)
+    heroTitle: "AI-Powered Clinical Supervision Simulator",
+    heroDesc: "Developed for psychology students. Conduct voice or text sessions with realistic cases, get instant GPT-based clinical feedback and empathy analysis.",
+    startBtn: "🚀 Start Simulation",
+    feature1Title: "🎙️ Voice or Text Therapy",
+    feature1Desc: "Communicate with clients naturally in real-time using Whisper AI infrastructure.",
+    feature2Title: "🧠 GPT-Powered Analysis",
+    feature2Desc: "See your therapeutic alliance and empathy score instantly after the session.",
+    feature3Title: "📈 Clinical Development",
+    feature3Desc: "Strengthen your clinical reflexes in a risk-free environment with realistic scenarios.",
+    howItWorks: "How It Works?",
+    step1: "1. Select Case",
+    step1Desc: "Choose a scenario from the library.",
+    step2: "2. Manage Session",
+    step2Desc: "Interact and intervene with the client.",
+    step3: "3. Get Report",
+    step3Desc: "Receive detailed analysis from the AI supervisor.",
+    // ESKİ ÇEVİRİLER DEVAM EDİYOR
     sysStatus: "SYSTEM STATUS",
     online: "Online",
     ready: "Connection Ready",
@@ -271,8 +301,8 @@ const translations = {
 };
 
 export default function PsikoSimMaster() {
-  const [lang, setLang] = useState('tr'); // YENİ: Dil State'i (Default TR)
-  const t = translations[lang as keyof typeof translations]; // Çeviri Objesi
+  const [lang, setLang] = useState('tr'); 
+  const t = translations[lang as keyof typeof translations]; 
 
   const [activePage, setActivePage] = useState('dashboard');
   const [vakalar, setVakalar] = useState<any[]>([]);
@@ -507,7 +537,6 @@ export default function PsikoSimMaster() {
      const apiGecmis = mesajlar.map(m => ({ role: m.role, content: m.content }));
      const vakaKurallari = currentVaka ? currentVaka.kurallar : "Sen bir danışansın.";
      
-     // YENİ: GPT'ye "İngilizce Konuş" Emri
      const langRule = lang === 'en' ? "\n7. IMPORTANT: YOU MUST PLAY YOUR ROLE AND RESPOND COMPLETELY IN ENGLISH NO MATTER WHAT THE USER SAYS." : "";
      
      const systemPrompt = `SENİN KİMLİĞİN: ${vakaKurallari}
@@ -575,7 +604,6 @@ export default function PsikoSimMaster() {
     
     try {
       const apiGecmis = mesajlar.map(m => ({ role: m.role, content: m.content }));
-      // YENİ: İngilizce moddaysak, GPT'ye analizleri de İngilizce yapmasını tembihliyoruz.
       if(lang === 'en') {
           apiGecmis.push({ role: "system", content: "CRITICAL INSTRUCTION: Analyze the session and write the 'terapotik_ittifak' and 'oneri' fields entirely in ENGLISH." });
       }
@@ -644,7 +672,6 @@ export default function PsikoSimMaster() {
 
       <div className="flex items-center gap-4 md:gap-6">
         
-        {/* YENİ: DİL DEĞİŞTİRİCİ BUTON (TR / EN) */}
         <div className="flex items-center bg-slate-200 rounded-full p-1">
           <button onClick={() => setLang('tr')} className={`px-3 py-1.5 rounded-full text-[10px] font-black tracking-widest transition-all ${lang === 'tr' ? 'bg-white shadow-sm text-[#3E34FA]' : 'text-slate-400 hover:text-slate-600'}`}>TR</button>
           <button onClick={() => setLang('en')} className={`px-3 py-1.5 rounded-full text-[10px] font-black tracking-widest transition-all ${lang === 'en' ? 'bg-white shadow-sm text-[#3E34FA]' : 'text-slate-400 hover:text-slate-600'}`}>EN</button>
@@ -804,6 +831,14 @@ export default function PsikoSimMaster() {
             </section>
 
             <aside className="hidden xl:flex w-[360px] bg-[#F8F9FB] p-6 flex-col gap-6 overflow-y-auto shrink-0 z-10 border-l border-slate-200">
+               {isTestMode && (
+                 <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 border-t-4 border-t-blue-500 flex-1 flex flex-col mb-6">
+                    <h3 className="text-sm font-bold text-[#2B3674] mb-2 flex items-center gap-2"><span>🧪</span> {t.livePrompt}</h3>
+                    <p className="text-[10px] text-slate-500 font-bold mb-4 uppercase tracking-widest">{t.sysRules}</p>
+                    <textarea value={currentVaka?.kurallar || ""} onChange={(e) => setCurrentVaka({...currentVaka, kurallar: e.target.value})} className="flex-1 w-full bg-[#F8F9FB] border border-slate-200 rounded-xl p-4 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-inner resize-none mb-4" />
+                    <button onClick={handleTesttenKaydet} className="w-full py-3 bg-blue-600 text-white rounded-xl font-bold text-sm shadow-md hover:bg-blue-700 transition-all">{t.saveDb}</button>
+                 </div>
+               )}
                <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 border-t-4 border-t-[#3E34FA]">
                   <div className="flex justify-between items-center mb-6"><h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest">{t.stressLevel}</h4></div>
                   <div className="flex items-end justify-between h-24 gap-2 mb-4 opacity-50">
@@ -852,21 +887,41 @@ export default function PsikoSimMaster() {
                    <div className="bg-gradient-to-r from-[#2111E7] to-[#4537F3] rounded-[24px] md:rounded-[32px] p-8 md:p-12 text-white shadow-xl relative overflow-hidden">
                      <div className="relative z-10 max-w-2xl"><h1 className="text-2xl md:text-4xl font-bold mb-3 md:mb-4 leading-snug">{t.heroTitle}</h1><p className="text-indigo-100 text-sm md:text-base mb-6 md:mb-8 opacity-90">{t.heroDesc}</p><button onClick={() => setActivePage('library')} className="w-full md:w-auto bg-white text-[#3E34FA] px-6 md:px-8 py-3.5 rounded-full font-bold text-sm shadow-lg flex items-center justify-center gap-2 hover:scale-105 transition-all">{t.startBtn}</button></div>
                    </div>
-                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                     {[
-                       { t: t.sysStatus, v: t.online, d: t.ready, icon: '🟢', c: 'text-emerald-500', bc: 'border-emerald-400' },
-                       { t: t.regCases, v: isLoading ? t.loading : `${filteredVakalar.length} ${t.patient}`, d: isLoading ? t.syncing : t.waitSession, icon: '👤', c: 'text-[#3E34FA]', bc: 'border-[#3E34FA]' },
-                       { t: t.clinicRoom, v: t.available, d: t.readyMeet, icon: '🚪', c: 'text-slate-400', bc: 'border-[#3E34FA]' }
-                     ].map((card, i) => (<div key={i} className={`bg-white p-5 md:p-6 rounded-[20px] md:rounded-[24px] shadow-sm border-l-4 ${card.bc}`}><div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center mb-4 text-xl">{card.icon}</div><p className="text-[10px] font-bold text-[#A3AED0] uppercase tracking-widest mb-1">{card.t}</p><p className="text-xl md:text-2xl font-bold text-[#2B3674] mb-2">{card.v}</p><p className={`text-[10px] font-bold uppercase flex items-center gap-1 ${card.c}`}>● {card.d}</p></div>))}
+                   
+                   {/* YENİ: VİTRİN - ÖZELLİKLER VE NASIL ÇALIŞIR */}
+                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mt-8">
+                      <div className="bg-white p-6 rounded-[24px] shadow-sm border border-slate-100">
+                         <h3 className="text-lg font-bold text-[#2B3674] mb-2">{t.feature1Title}</h3>
+                         <p className="text-sm text-slate-500 leading-relaxed">{t.feature1Desc}</p>
+                      </div>
+                      <div className="bg-white p-6 rounded-[24px] shadow-sm border border-slate-100">
+                         <h3 className="text-lg font-bold text-[#2B3674] mb-2">{t.feature2Title}</h3>
+                         <p className="text-sm text-slate-500 leading-relaxed">{t.feature2Desc}</p>
+                      </div>
+                      <div className="bg-white p-6 rounded-[24px] shadow-sm border border-slate-100">
+                         <h3 className="text-lg font-bold text-[#2B3674] mb-2">{t.feature3Title}</h3>
+                         <p className="text-sm text-slate-500 leading-relaxed">{t.feature3Desc}</p>
+                      </div>
                    </div>
-                   <div className="bg-white rounded-[24px] md:rounded-[32px] p-6 md:p-8 shadow-sm border border-slate-100 relative overflow-hidden group transition-all hover:shadow-md">
-                     <div className="flex justify-between items-center mb-6"><div><h3 className="text-base md:text-lg font-bold text-[#1E293B]">{t.activeSim}</h3><p className="text-xs text-[#64748B] font-medium">{t.activeSimDesc}</p></div><button onClick={() => setActivePage('library')} className="text-[#3E34FA] text-xs font-bold hover:underline">{t.seeAll}</button></div>
-                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-8 bg-[#F8FAFC] p-4 md:p-6 rounded-2xl md:rounded-3xl border border-slate-50">
-                       <div className="w-12 h-12 md:w-16 md:h-16 bg-indigo-100 rounded-2xl flex items-center justify-center text-xl md:text-2xl shadow-inner shrink-0">👤</div>
-                       <div className="flex-1 w-full"><div className="flex items-center gap-3 mb-1"><h4 className="text-sm md:text-base font-bold text-[#1E293B]">{currentVaka?.vaka_adi || t.noSelectedCase}</h4><span className="bg-[#E9E3FF] text-[#3E34FA] text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-tighter">{t.ongoing}</span></div><p className="text-[11px] md:text-xs text-[#64748B] font-medium">{t.lastAction}: {mesajlar.length > 0 ? mesajlar[mesajlar.length - 1].time : t.notStarted}</p></div>
-                       <div className="flex items-center gap-6 md:gap-10 sm:pr-4 w-full sm:w-auto justify-between sm:justify-end border-t sm:border-t-0 pt-4 sm:pt-0"><div className="text-center"><p className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t.messages}</p><p className="text-base md:text-lg font-bold text-[#1E293B]">{mesajlar.length}</p></div><div className="text-center"><p className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t.duration}</p><p className="text-base md:text-lg font-bold text-[#1E293B]">{formatTime(seansSuresi)}</p></div><button onClick={() => { if(currentVaka) setActivePage('chat-session') }} className="w-10 h-10 bg-white border border-slate-200 rounded-full flex items-center justify-center shadow-sm hover:bg-[#3E34FA] hover:text-white transition-all sm:group-hover:scale-110">➔</button></div>
-                     </div>
+
+                   <div className="mt-10 mb-6">
+                      <h2 className="text-2xl font-bold text-[#1E293B] mb-6">{t.howItWorks}</h2>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                         <div className="flex items-start gap-4">
+                            <div className="w-10 h-10 rounded-full bg-[#E9E3FF] text-[#3E34FA] flex items-center justify-center font-bold shrink-0">1</div>
+                            <div><h4 className="font-bold text-[#2B3674]">{t.step1}</h4><p className="text-xs text-slate-500 mt-1">{t.step1Desc}</p></div>
+                         </div>
+                         <div className="flex items-start gap-4">
+                            <div className="w-10 h-10 rounded-full bg-[#E9E3FF] text-[#3E34FA] flex items-center justify-center font-bold shrink-0">2</div>
+                            <div><h4 className="font-bold text-[#2B3674]">{t.step2}</h4><p className="text-xs text-slate-500 mt-1">{t.step2Desc}</p></div>
+                         </div>
+                         <div className="flex items-start gap-4">
+                            <div className="w-10 h-10 rounded-full bg-[#E9E3FF] text-[#3E34FA] flex items-center justify-center font-bold shrink-0">3</div>
+                            <div><h4 className="font-bold text-[#2B3674]">{t.step3}</h4><p className="text-xs text-slate-500 mt-1">{t.step3Desc}</p></div>
+                         </div>
+                      </div>
                    </div>
+
                  </div>
                  <div className="w-full lg:w-[340px] bg-white border-t lg:border-t-0 lg:border-l border-slate-200 p-6 md:p-8 flex flex-col items-center shrink-0">
                     <div className="w-full flex justify-between items-center mb-6 md:mb-8"><span className="text-[10px] font-bold text-[#A3AED0] uppercase tracking-widest">{t.patientFile}</span><span className="text-slate-300">🔍</span></div>
@@ -874,6 +929,18 @@ export default function PsikoSimMaster() {
                     <h3 className="text-xl md:text-2xl font-bold text-[#2B3674] line-clamp-1">{isLoading ? t.loading : (filteredVakalar[0]?.vaka_adi || t.notFound)}</h3>
                     <p className="text-xs md:text-sm text-[#A3AED0] font-medium mb-6 md:mb-8">{t.waitSim}</p>
                     <button onClick={() => {if(filteredVakalar[0]) startSession(filteredVakalar[0])}} className="w-full py-3 md:py-4 border-2 border-[#E9E3FF] text-[#3E34FA] rounded-xl md:rounded-2xl font-bold text-sm hover:bg-[#F4F7FE] transition-all flex justify-center items-center gap-2">{t.reviewFile}</button>
+                    
+                    <div className="w-full mt-10 space-y-4">
+                       <h4 className="text-[10px] font-bold text-[#A3AED0] uppercase tracking-widest text-center">{t.sysStatus}</h4>
+                       <div className="flex justify-between items-center p-4 bg-[#F8F9FB] rounded-xl border border-slate-100">
+                          <span className="text-sm font-bold text-slate-600">{t.regCases}</span>
+                          <span className="text-sm font-bold text-[#3E34FA]">{isLoading ? "..." : filteredVakalar.length}</span>
+                       </div>
+                       <div className="flex justify-between items-center p-4 bg-[#F8F9FB] rounded-xl border border-slate-100">
+                          <span className="text-sm font-bold text-slate-600">{t.clinicRoom}</span>
+                          <span className="text-xs font-bold text-emerald-500 bg-emerald-50 px-2 py-1 rounded-md">● {t.available}</span>
+                       </div>
+                    </div>
                  </div>
                </div>
              )}
