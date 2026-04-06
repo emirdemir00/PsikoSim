@@ -6,6 +6,7 @@ const translations = {
     lab: "Simülasyon Lab",
     library: "Vaka Kütüphanesi",
     team: "Ekip",
+    history: "Geçmiş Seanslarım",
     about: "Proje Hakkında",
     admin: "Yetkili Paneli",
     newSim: "Yeni Simülasyon",
@@ -21,7 +22,6 @@ const translations = {
     skip: "Boş Bırak ve Devam Et",
     sysPrep: "Sistem Hazırlanıyor",
     sysWake: "Sunucu uyandırılıyor...",
-    // YENİ EKLENEN ANA SAYFA ÇEVİRİLERİ (TR)
     heroTitle: "Yapay Zeka Destekli Klinik Süpervizyon Simülatörü",
     heroDesc: "Psikolog adayları için geliştirildi. Sesli veya yazılı olarak gerçekçi vakalarla görüşün, GPT tabanlı anlık klinik geri bildirim ve empati analizi alın.",
     startBtn: "🚀 Simülasyona Başla",
@@ -38,7 +38,6 @@ const translations = {
     step2Desc: "Danışanla etkileşime geçip müdahalelerde bulunun.",
     step3: "3. Raporunu Al",
     step3Desc: "Yapay zeka süpervizörden detaylı analiz ve skor alın.",
-    // ESKİ ÇEVİRİLER DEVAM EDİYOR
     sysStatus: "SİSTEM DURUMU",
     online: "Çevrimiçi",
     ready: "Bağlantı Hazır",
@@ -73,9 +72,6 @@ const translations = {
     teamTitle: "Ekip Üyeleri",
     teamDesc: "Psiko-Sim Laboratuvarı, teknolojiyi ve psikolojiyi bir araya getirerek yarının klinik eğitimini inşa ediyor.",
     role: "GÖREV",
-    joinTeam: "Ekibe Katılın",
-    joinDesc: "Psikoloji ve teknolojinin kesişiminde fark yaratmak ister misiniz?",
-    openPos: "Pozisyonları İncele",
     vision: "Vizyonumuz",
     visionDesc: "Psiko-Sim Laboratuvarı ekibi olarak, her klinik vakada insan hikayesini merkeze alıyoruz.",
     yearRnd: "Yıllık Ar-Ge",
@@ -148,12 +144,17 @@ const translations = {
     openQDesc: '"Bu hissettiğin duyguyu biraz daha açabilir misin?"',
     livePrompt: "Canlı Prompt Düzenleyici",
     sysRules: "Sistem Kuralları",
-    saveDb: "💾 Kalıcı Olarak Kaydet"
+    saveDb: "💾 Kalıcı Olarak Kaydet",
+    pastSessions: "Geçmiş Seanslar",
+    noHistory: "Henüz tamamlanmış bir seans bulunmuyor.",
+    date: "Tarih",
+    score: "Skor"
   },
   en: {
     lab: "Simulation Lab",
     library: "Case Library",
     team: "Team",
+    history: "Past Sessions",
     about: "About Project",
     admin: "Admin Panel",
     newSim: "New Simulation",
@@ -169,7 +170,6 @@ const translations = {
     skip: "Skip & Continue",
     sysPrep: "System Preparing",
     sysWake: "Waking up server...",
-    // YENİ EKLENEN ANA SAYFA ÇEVİRİLERİ (EN)
     heroTitle: "AI-Powered Clinical Supervision Simulator",
     heroDesc: "Developed for psychology students. Conduct voice or text sessions with realistic cases, get instant GPT-based clinical feedback and empathy analysis.",
     startBtn: "🚀 Start Simulation",
@@ -186,7 +186,6 @@ const translations = {
     step2Desc: "Interact and intervene with the client.",
     step3: "3. Get Report",
     step3Desc: "Receive detailed analysis from the AI supervisor.",
-    // ESKİ ÇEVİRİLER DEVAM EDİYOR
     sysStatus: "SYSTEM STATUS",
     online: "Online",
     ready: "Connection Ready",
@@ -221,9 +220,6 @@ const translations = {
     teamTitle: "Team Members",
     teamDesc: "Psiko-Sim Laboratory builds tomorrow's clinical education by combining technology and psychology.",
     role: "ROLE",
-    joinTeam: "Join the Team",
-    joinDesc: "Do you want to make a difference at the intersection of psychology and technology?",
-    openPos: "View Open Positions",
     vision: "Our Vision",
     visionDesc: "As the Psiko-Sim Laboratory team, we put the human story at the center of every clinical case.",
     yearRnd: "Years R&D",
@@ -296,7 +292,11 @@ const translations = {
     openQDesc: '"Can you expand a little more on this feeling?"',
     livePrompt: "Live Prompt Editor",
     sysRules: "System Rules",
-    saveDb: "💾 Save Permanently to DB"
+    saveDb: "💾 Save Permanently to DB",
+    pastSessions: "Past Sessions",
+    noHistory: "No completed sessions found yet.",
+    date: "Date",
+    score: "Score"
   }
 };
 
@@ -308,8 +308,8 @@ export default function PsikoSimMaster() {
   const [vakalar, setVakalar] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   
   const [isAdminAuth, setIsAdminAuth] = useState(false);
   const [adminPassword, setAdminPassword] = useState("");
@@ -328,6 +328,7 @@ export default function PsikoSimMaster() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analizSonucu, setAnalizSonucu] = useState<any>(null);
   const [hizliNot, setHizliNot] = useState(""); 
+  const [seansGecmisi, setSeansGecmisi] = useState<any[]>([]);
 
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [userName, setUserName] = useState("");
@@ -337,6 +338,7 @@ export default function PsikoSimMaster() {
   const [tempTitle, setTempTitle] = useState("");
 
   useEffect(() => {
+    document.title = "Psiko-Sim | Klinik Süpervizyon Laboratuvarı";
     const savedUser = localStorage.getItem("psikosim_user");
     if (savedUser) {
       if (savedUser === "skipped") {
@@ -353,26 +355,24 @@ export default function PsikoSimMaster() {
     } else {
       setShowProfileModal(true);
     }
+    
+    const savedHistory = localStorage.getItem("psikosim_history");
+    if (savedHistory) setSeansGecmisi(JSON.parse(savedHistory));
   }, []);
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
+    setIsNotificationsOpen(false);
   }, [activePage]);
 
   const vakaYukle = async () => {
     setIsLoading(true); 
     try {
       const timestamp = new Date().getTime();
-      const res = await fetch(`https://psikosim-backend.onrender.com/vakalar?t=${timestamp}`, { 
-        cache: 'no-store'
-      });
-      
+      const res = await fetch(`https://psikosim-backend.onrender.com/vakalar?t=${timestamp}`, { cache: 'no-store' });
       const data = await res.json();
       const gercekDizi = Array.isArray(data) ? data : data.vakalar;
-
-      if (gercekDizi && Array.isArray(gercekDizi)) {
-        setVakalar(gercekDizi);
-      }
+      if (gercekDizi && Array.isArray(gercekDizi)) setVakalar(gercekDizi);
     } catch (err) { 
       console.error("Bağlantı koptu:", err); 
     } finally {
@@ -380,9 +380,7 @@ export default function PsikoSimMaster() {
     }
   };
 
-  useEffect(() => {
-    vakaYukle();
-  }, [activePage]);
+  useEffect(() => { vakaYukle(); }, [activePage]);
 
   useEffect(() => {
     let interval: any;
@@ -396,9 +394,7 @@ export default function PsikoSimMaster() {
   }, [activePage]);
 
   useEffect(() => {
-    if (activePage === 'chat-session') {
-       scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-    }
+    if (activePage === 'chat-session') scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [mesajlar, activePage]);
 
   const formatTime = (sec: number) => {
@@ -424,33 +420,14 @@ export default function PsikoSimMaster() {
   const handleVakaKaydet = async (e: any) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-
     try {
       if (duzenlenenVaka) {
-        const guncelVeri = {
-          eski_vaka_adi: duzenlenenVaka.vaka_adi,
-          yeni_vaka_adi: formData.get("vaka_adi"),
-          ozet: formData.get("ozet"),
-          kurallar: formData.get("kurallar")
-        };
-
-        await fetch(`https://psikosim-backend.onrender.com/vaka-guncelle`, { 
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(guncelVeri)
-        });
+        const guncelVeri = { eski_vaka_adi: duzenlenenVaka.vaka_adi, yeni_vaka_adi: formData.get("vaka_adi"), ozet: formData.get("ozet"), kurallar: formData.get("kurallar") };
+        await fetch(`https://psikosim-backend.onrender.com/vaka-guncelle`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(guncelVeri) });
         setDuzenlenenVaka(null);
       } else {
-        const vakaVerisi = {
-          vaka_adi: formData.get("vaka_adi"),
-          ozet: formData.get("ozet"),
-          kurallar: formData.get("kurallar")
-        };
-        await fetch("https://psikosim-backend.onrender.com/vaka-ekle", { 
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(vakaVerisi)
-        });
+        const vakaVerisi = { vaka_adi: formData.get("vaka_adi"), ozet: formData.get("ozet"), kurallar: formData.get("kurallar") };
+        await fetch("https://psikosim-backend.onrender.com/vaka-ekle", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(vakaVerisi) });
       }
       vakaYukle(); 
       e.target.reset();
@@ -465,32 +442,17 @@ export default function PsikoSimMaster() {
     if(window.confirm(`'${adi}' adlı vakayı silmek istediğinize emin misiniz?`)) {
       try {
         const res = await fetch(`https://psikosim-backend.onrender.com/vaka-sil/${adi}`, { method: "DELETE" });
-        if(res.ok) {
-            setVakalar(prev => prev.filter(v => v.vaka_adi !== adi));
-            vakaYukle();
-        }
-      } catch (err) {
-          console.error("Silme hatası:", err);
-      }
+        if(res.ok) { setVakalar(prev => prev.filter(v => v.vaka_adi !== adi)); vakaYukle(); }
+      } catch (err) { console.error("Silme hatası:", err); }
     }
   };
 
   const handleTesttenKaydet = async () => {
     if(!currentVaka) return;
     try {
-      const guncelVeri = {
-        eski_vaka_adi: currentVaka.vaka_adi,
-        yeni_vaka_adi: currentVaka.vaka_adi, 
-        ozet: currentVaka.ozet, 
-        kurallar: currentVaka.kurallar 
-      };
-      const res = await fetch(`https://psikosim-backend.onrender.com/vaka-guncelle`, {
-        method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(guncelVeri)
-      });
-      if(res.ok) {
-        alert("Canlı test kuralları başarıyla veritabanına kaydedildi!");
-        vakaYukle();
-      } else { alert("Kaydetme hatası!"); }
+      const guncelVeri = { eski_vaka_adi: currentVaka.vaka_adi, yeni_vaka_adi: currentVaka.vaka_adi, ozet: currentVaka.ozet, kurallar: currentVaka.kurallar };
+      const res = await fetch(`https://psikosim-backend.onrender.com/vaka-guncelle`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(guncelVeri) });
+      if(res.ok) { alert("Canlı test kuralları başarıyla veritabanına kaydedildi!"); vakaYukle(); } else { alert("Kaydetme hatası!"); }
     } catch(err) { alert("Bağlantı hatası!"); }
   };
 
@@ -504,23 +466,18 @@ export default function PsikoSimMaster() {
             const mediaRecorder = new MediaRecorder(stream);
             mediaRecorderRef.current = mediaRecorder;
             const chunks: BlobPart[] = [];
-            
             mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
             mediaRecorder.onstop = async () => {
                 const audioBlob = new Blob(chunks, { type: 'audio/webm' });
                 const formData = new FormData();
                 formData.append("file", audioBlob, "audio.webm");
-                
                 try {
                     const res = await fetch("https://psikosim-backend.onrender.com/ses-isleme", { method: "POST", body: formData });
                     const data = await res.json();
-                    if (data.text) {
-                        mesajIlet(data.text, true); 
-                    }
+                    if (data.text) { mesajIlet(data.text, true); }
                 } catch (err) { console.error("Ses işleme hatası", err); }
                 stream.getTracks().forEach(track => track.stop());
             };
-            
             mediaRecorder.start();
             setIsRecording(true);
         } catch (err) { alert("Mikrofon erişimi reddedildi."); }
@@ -529,14 +486,11 @@ export default function PsikoSimMaster() {
 
   const mesajIlet = async (text: string, voiceMode: boolean) => {
      if(!text.trim()) return;
-     
      const userMsg = { role: 'user', content: text, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) };
      setMesajlar(prev => [...prev, userMsg]);
      setInput("");
-
      const apiGecmis = mesajlar.map(m => ({ role: m.role, content: m.content }));
      const vakaKurallari = currentVaka ? currentVaka.kurallar : "Sen bir danışansın.";
-     
      const langRule = lang === 'en' ? "\n7. IMPORTANT: YOU MUST PLAY YOUR ROLE AND RESPOND COMPLETELY IN ENGLISH NO MATTER WHAT THE USER SAYS." : "";
      
      const systemPrompt = `SENİN KİMLİĞİN: ${vakaKurallari}
@@ -552,32 +506,14 @@ export default function PsikoSimMaster() {
         const response = await fetch("https://psikosim-backend.onrender.com/chat", {
            method: "POST",
            headers: { "Content-Type": "application/json" },
-           body: JSON.stringify({
-              messages: [
-                 { role: "system", content: systemPrompt },
-                 ...apiGecmis,
-                 { role: "user", content: text }
-              ]
-           })
+           body: JSON.stringify({ messages: [ { role: "system", content: systemPrompt }, ...apiGecmis, { role: "user", content: text } ] })
         });
-
         const data = await response.json();
-
         if (data.answer) {
-           setMesajlar(prev => [...prev, { 
-              role: 'assistant', 
-              content: data.answer, 
-              time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) 
-           }]);
-
-           if (voiceMode && data.audio_base64) {
-              const audio = new Audio(data.audio_base64);
-              audio.play();
-           }
+           setMesajlar(prev => [...prev, { role: 'assistant', content: data.answer, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) }]);
+           if (voiceMode && data.audio_base64) { const audio = new Audio(data.audio_base64); audio.play(); }
         }
-     } catch (err) {
-        console.error("Chat bağlantı hatası:", err);
-     }
+     } catch (err) { console.error("Chat bağlantı hatası:", err); }
   };
 
   const startSession = (vaka: any) => {
@@ -601,21 +537,26 @@ export default function PsikoSimMaster() {
   const handleSeansBitir = async () => {
     setActivePage('seans-raporu');
     setIsAnalyzing(true);
-    
     try {
       const apiGecmis = mesajlar.map(m => ({ role: m.role, content: m.content }));
-      if(lang === 'en') {
-          apiGecmis.push({ role: "system", content: "CRITICAL INSTRUCTION: Analyze the session and write the 'terapotik_ittifak' and 'oneri' fields entirely in ENGLISH." });
-      }
+      if(lang === 'en') { apiGecmis.push({ role: "system", content: "CRITICAL INSTRUCTION: Analyze the session and write the 'terapotik_ittifak' and 'oneri' fields entirely in ENGLISH." }); }
 
       const response = await fetch("https://psikosim-backend.onrender.com/seans-analizi", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: apiGecmis, hizli_notlar: hizliNot }) 
+        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: apiGecmis, hizli_notlar: hizliNot }) 
       });
-      
       const data = await response.json();
       setAnalizSonucu(data);
+
+      const yeniKayit = {
+        id: Date.now(),
+        vaka: currentVaka?.vaka_adi || t.unknown,
+        skor: data.empati_skoru || 0,
+        tarih: new Date().toLocaleDateString()
+      };
+      const yeniGecmis = [yeniKayit, ...seansGecmisi];
+      setSeansGecmisi(yeniGecmis);
+      localStorage.setItem("psikosim_history", JSON.stringify(yeniGecmis));
+
     } catch (err) {
       console.error("Analiz hatası:", err);
       setAnalizSonucu({
@@ -630,7 +571,7 @@ export default function PsikoSimMaster() {
 
   const handleProfileSave = () => {
     let newInitials = "";
-    if (tempName.trim() !== "" || tempTitle.trim() !== "") {
+    if (tempName.trim() !== "") {
       setUserName(tempName);
       setUserTitle(tempTitle);
       const words = tempName.trim().split(" ").filter(w => w.length > 0);
@@ -650,7 +591,8 @@ export default function PsikoSimMaster() {
 
   const filteredVakalar = vakalar.filter(v => (v.vaka_adi || "").toLowerCase().includes(searchTerm.toLowerCase()));
 
-  const TopHeader = () => (
+  // FIX: Header'i bağımsız JSX bloğu olarak tanımladık, böylece re-render'da arama kutusu odağı kaybetmez
+  const headerJSX = (
     <header className="h-[70px] md:h-[90px] bg-[#F8FAFC] flex items-center justify-between px-4 md:px-10 shrink-0 sticky top-0 z-30 border-b border-slate-100">
       <div className="flex-1 flex items-center gap-4 md:gap-6">
          <button onClick={() => setIsMobileMenuOpen(true)} className="md:hidden p-2 text-slate-500 hover:bg-slate-100 rounded-lg transition-colors">
@@ -671,32 +613,43 @@ export default function PsikoSimMaster() {
       </div>
 
       <div className="flex items-center gap-4 md:gap-6">
-        
         <div className="flex items-center bg-slate-200 rounded-full p-1">
           <button onClick={() => setLang('tr')} className={`px-3 py-1.5 rounded-full text-[10px] font-black tracking-widest transition-all ${lang === 'tr' ? 'bg-white shadow-sm text-[#3E34FA]' : 'text-slate-400 hover:text-slate-600'}`}>TR</button>
           <button onClick={() => setLang('en')} className={`px-3 py-1.5 rounded-full text-[10px] font-black tracking-widest transition-all ${lang === 'en' ? 'bg-white shadow-sm text-[#3E34FA]' : 'text-slate-400 hover:text-slate-600'}`}>EN</button>
         </div>
 
-        <button className="text-slate-400 hover:text-slate-600 relative hidden sm:block">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-          <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
-        </button>
+        <div className="relative">
+          <button onClick={() => setIsNotificationsOpen(!isNotificationsOpen)} className="text-slate-400 hover:text-slate-600 relative hidden sm:block">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+            <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+          </button>
+          {isNotificationsOpen && (
+            <div className="absolute right-0 mt-4 w-72 bg-white rounded-2xl shadow-2xl border border-slate-100 p-4 z-50 animate-in fade-in zoom-in-95">
+              <h4 className="font-bold text-sm mb-3">Bildirimler</h4>
+              <div className="space-y-3">
+                <div className="text-[11px] p-3 bg-emerald-50 rounded-xl text-emerald-700 font-bold flex items-start gap-2"><span className="text-sm">🟢</span> Sistem veritabanı başarıyla senkronize edildi.</div>
+                <div className="text-[11px] p-3 bg-indigo-50 rounded-xl text-indigo-700 font-bold flex items-start gap-2"><span className="text-sm">👤</span> {filteredVakalar[0]?.vaka_adi || 'Selin'} vakası simülasyon için hazır bekliyor.</div>
+              </div>
+            </div>
+          )}
+        </div>
+
         <div className="h-6 md:h-8 w-px bg-slate-200 hidden sm:block"></div> 
         {userName ? (
-            <div className="flex items-center gap-3 cursor-pointer">
-               <div className="text-right hidden md:block">
+            <div className="flex items-center gap-3 cursor-pointer group" onClick={() => { setTempName(userName); setTempTitle(userTitle); setShowProfileModal(true); }}>
+               <div className="text-right hidden md:block group-hover:opacity-70 transition-opacity">
                   <p className="text-sm font-bold text-[#1E293B] leading-tight">{userName}</p>
                   <p className="text-[10px] text-[#64748B] font-bold uppercase tracking-widest">{userTitle}</p>
                </div>
-               <div className="w-8 h-8 md:w-10 md:h-10 bg-[#1E293B] rounded-full flex items-center justify-center text-white font-bold shadow-md text-xs md:text-base">{userInitials}</div>
+               <div className="w-8 h-8 md:w-10 md:h-10 bg-[#1E293B] rounded-full flex items-center justify-center text-white font-bold shadow-md text-xs md:text-base group-hover:scale-105 transition-transform">{userInitials}</div>
             </div>
         ) : (
-            <div className="flex items-center gap-3 cursor-pointer" onClick={() => setShowProfileModal(true)}>
-               <div className="text-right hidden md:block">
+            <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setShowProfileModal(true)}>
+               <div className="text-right hidden md:block group-hover:opacity-70 transition-opacity">
                   <p className="text-sm font-bold text-[#1E293B] leading-tight">{t.guest}</p>
                   <p className="text-[10px] text-[#64748B] font-bold uppercase tracking-widest">{t.title}</p>
                </div>
-               <div className="w-8 h-8 md:w-10 md:h-10 bg-slate-200 rounded-full flex items-center justify-center text-slate-500 font-bold shadow-sm">
+               <div className="w-8 h-8 md:w-10 md:h-10 bg-slate-200 rounded-full flex items-center justify-center text-slate-500 font-bold shadow-sm group-hover:scale-105 transition-transform">
                   <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                </div>
             </div>
@@ -869,6 +822,7 @@ export default function PsikoSimMaster() {
               { id: 'dashboard', name: t.lab, icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /> },
               { id: 'library', name: t.library, icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /> },
               { id: 'team', name: t.team, icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /> },
+              { id: 'history', name: t.pastSessions, icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /> },
               { id: 'about', name: t.about, icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /> }
             ].map((item) => (
               <button key={item.id} onClick={() => setActivePage(item.id)} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-full text-[14px] font-semibold transition-all ${activePage === item.id ? 'bg-[#3E34FA] text-white shadow-md' : 'text-[#64748B] hover:bg-slate-100 hover:text-[#1E293B]'}`}><svg className="w-5 h-5 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">{item.icon}</svg>{item.name}</button>
@@ -879,7 +833,7 @@ export default function PsikoSimMaster() {
         </aside>
 
          <section className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
-           <TopHeader />
+           {headerJSX}
            <div className="flex-1 overflow-y-auto">
              {activePage === 'dashboard' && (
                <div className="flex flex-col lg:flex-row h-full animate-in fade-in duration-300">
@@ -888,7 +842,6 @@ export default function PsikoSimMaster() {
                      <div className="relative z-10 max-w-2xl"><h1 className="text-2xl md:text-4xl font-bold mb-3 md:mb-4 leading-snug">{t.heroTitle}</h1><p className="text-indigo-100 text-sm md:text-base mb-6 md:mb-8 opacity-90">{t.heroDesc}</p><button onClick={() => setActivePage('library')} className="w-full md:w-auto bg-white text-[#3E34FA] px-6 md:px-8 py-3.5 rounded-full font-bold text-sm shadow-lg flex items-center justify-center gap-2 hover:scale-105 transition-all">{t.startBtn}</button></div>
                    </div>
                    
-                   {/* YENİ: VİTRİN - ÖZELLİKLER VE NASIL ÇALIŞIR */}
                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mt-8">
                       <div className="bg-white p-6 rounded-[24px] shadow-sm border border-slate-100">
                          <h3 className="text-lg font-bold text-[#2B3674] mb-2">{t.feature1Title}</h3>
@@ -944,6 +897,39 @@ export default function PsikoSimMaster() {
                  </div>
                </div>
              )}
+             
+             {/* YENİ: GEÇMİŞ SEANSLAR SAYFASI */}
+             {activePage === 'history' && (
+                <div className="p-4 md:p-8 space-y-6 md:space-y-8 animate-in fade-in duration-300 max-w-4xl">
+                   <div className="max-w-3xl"><h1 className="text-2xl md:text-3xl font-bold text-[#2B3674] mb-3 md:mb-4">{t.pastSessions}</h1><p className="text-sm md:text-base text-[#A3AED0] font-medium leading-relaxed">Geçmiş klinik analizleriniz ve süpervizyon raporlarınız.</p></div>
+                   <div className="space-y-4">
+                     {seansGecmisi.length === 0 ? (
+                        <div className="p-10 text-center border-2 border-dashed border-slate-200 rounded-3xl">
+                            <p className="text-slate-400 font-bold">{t.noHistory}</p>
+                        </div>
+                     ) : (
+                        seansGecmisi.map((sec, i) => (
+                          <div key={i} className="bg-white rounded-[20px] p-5 border border-slate-100 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:shadow-md transition-all">
+                             <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-xl bg-indigo-50 text-[#3E34FA] flex items-center justify-center font-black text-lg">#{seansGecmisi.length - i}</div>
+                                <div>
+                                   <h3 className="font-bold text-[#2B3674] text-lg">{sec.vaka}</h3>
+                                   <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">{t.date}: {sec.tarih}</p>
+                                </div>
+                             </div>
+                             <div className="flex items-center gap-3">
+                                <div className="text-right">
+                                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t.empScore}</p>
+                                   <p className="text-2xl font-black text-[#3E34FA]">%{sec.skor}</p>
+                                </div>
+                             </div>
+                          </div>
+                        ))
+                     )}
+                   </div>
+                </div>
+             )}
+
              {activePage === 'library' && (
                <div className="p-4 md:p-8 space-y-6 md:space-y-8 animate-in fade-in duration-300">
                   <div className="max-w-3xl"><h1 className="text-2xl md:text-3xl font-bold text-[#2B3674] mb-3 md:mb-4">{t.simCases}</h1><p className="text-sm md:text-base text-[#A3AED0] font-medium leading-relaxed">{t.simCasesDesc}</p></div>
