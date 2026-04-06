@@ -955,8 +955,8 @@ export default function PsikoSimMaster() {
                  <div className="max-w-3xl"><h1 className="text-2xl md:text-4xl font-bold text-[#1E293B] mb-3 md:mb-4">{t.teamTitle}</h1><p className="text-sm md:text-lg text-[#64748B] font-medium leading-relaxed">{t.teamDesc}</p></div>
                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                    {[
-                     { n: "Emir Demir", r: "Yeni Medya ve YBS Öğrencisi", g: "Geliştirici ve Kurucu", d: "Yapay zeka ile üretime ve projelere yönelen Emir, platformun teknik altyapısını yönetiyor.", l: "https://www.linkedin.com/in/itsemirdemir/", img: "/emir.jpg" },
-                     { n: "Ebru Demir", r: "Psikoloji Mezunu", g: "Vaka Yazarı", d: "Ebru, psikolojik teorileri simülasyon senaryolarına dönüştürerek gerçekçi vaka analizleri sağlıyor.", l: "https://www.linkedin.com/in/ebru-demir-81a531369/", img: "/ebru.jpg" }
+                     { n: "Emir Demir", r: "Geliştirici ve Kurucu", g: "Geliştirici ve Kurucu", d: "Yapay zeka ile üretime ve projelere yönelen Emir, platformun teknik altyapısını yönetiyor.", l: "https://www.linkedin.com/in/itsemirdemir/", img: "/emir.jpg" },
+                     { n: "Ebru Demir", r: "Vaka Yazarı", g: "Vaka Yazarı", d: "Ebru, psikolojik teorileri simülasyon senaryolarına dönüştürerek gerçekçi vaka analizleri sağlıyor.", l: "https://www.linkedin.com/in/ebru-demir-81a531369/", img: "/ebru.jpg" }
                    ].map((u, i) => (
                      <div key={i} className="bg-white rounded-[32px] p-8 border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 group relative flex flex-col items-center text-center">
                        <div className="w-24 h-24 md:w-32 md:h-32 bg-slate-100 rounded-[24px] md:rounded-[32px] mb-4 overflow-hidden border-4 border-white shadow-inner"><img src={u.img} alt={u.n} className="w-full h-full object-cover" onError={(e:any) => { e.target.src=`https://api.dicebear.com/7.x/notionists/svg?seed=${u.n}` }} /></div>
