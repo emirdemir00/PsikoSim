@@ -590,10 +590,12 @@ export default function PsikoSimMaster() {
                        <div className="w-24 h-24 md:w-32 md:h-32 bg-slate-100 rounded-[24px] md:rounded-[32px] mb-4 overflow-hidden border-4 border-white shadow-inner"><img src={u.img} alt={u.n} className="w-full h-full object-cover" onError={(e:any) => { e.target.src=`https://api.dicebear.com/7.x/notionists/svg?seed=${u.n}` }} /></div>
                        <h3 className="text-lg md:text-xl font-bold text-[#1E293B]">{u.n}</h3><p className="text-[10px] md:text-[11px] font-bold text-[#3E34FA] uppercase tracking-widest mt-1">{u.r}</p>
                        <p className="text-xs md:text-sm text-slate-500 mt-4 flex-1">{u.d}</p>
-                       <a href={u.l} target="_blank" rel="noreferrer" className="mt-6 flex items-center justify-center gap-2 w-full py-3 bg-slate-50 text-[#3E34FA] rounded-xl font-bold text-sm hover:bg-[#3E34FA] hover:text-white transition-all">LinkedIn</a>
+                       <a href={u.l} target="_blank" rel="noreferrer" className="mt-6 flex items-center justify-center gap-2 w-full py-3 bg-[#0A66C2] text-white rounded-xl font-bold text-sm hover:bg-[#004182] transition-all">
+                           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.761 0 5-2.239 5-5v-14c0-2.761-2.239-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                           LinkedIn
+                       </a>
                      </div>
                    ))}
-                   <div className="border-2 border-dashed border-slate-200 rounded-[32px] p-8 flex flex-col items-center justify-center text-center space-y-4 hover:border-[#3E34FA] transition-colors cursor-pointer group"><div className="w-14 h-14 bg-slate-50 rounded-full flex items-center justify-center text-xl group-hover:scale-110">✨</div><h3 className="text-base font-bold text-[#1E293B]">Ekibe Katılın</h3><button className="text-[#3E34FA] font-bold text-xs hover:underline">Pozisyonları İncele</button></div>
                  </div>
                </div>
              )}
