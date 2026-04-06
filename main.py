@@ -78,6 +78,7 @@ def vaka_ekle(vaka: VakaModel):
         return {"status": "ok"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 # --- VAKA SİL ---
 @app.delete("/vaka-sil/{vaka_adi}")
 def vaka_sil(vaka_adi: str):
@@ -145,6 +146,49 @@ def chat(req: ChatRequest):
     except Exception as e:
         logger.error(f"Chat Hatasi: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# --- YENİ: SEANS ANALİZİ ---
+@app.post("/seans-analizi")
+def seans_analizi(req: ChatRequest):
+    try:
+        # GPT'ye göndermek için geçmişi temiz bir metin haline getiriyoruz
+        chat_history_text = ""
+        for m in req.messages:
+            if m.role == "system": continue # Sistem kurallarını gizle
+            kim = "Terapist (Öğrenci)" if m.role == "user" else "Danışan"
+            chat_history_text += f"{kim}: {m.content}\n"
+            
+        system_prompt = """Sen uzman bir klinik psikoloji süpervizörüsün. Aşağıdaki terapist-danışan görüşmesini incele.
+        Lütfen yanıtını SADECE aşağıdaki JSON formatında ver, dışına markdown veya açıklama ekleme:
+        {
+          "empati_skoru": 85,
+          "terapotik_ittifak": "Terapötik ittifak değerlendirmesini buraya yaz (kısa ve profesyonel).",
+          "oneri": "Terapiste klinik ve somut bir öneri yaz (kısa ve net)."
+        }"""
+
+        response = openai_client.chat.completions.create(
+            model="gpt-5.4-nano", 
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": f"Görüşme Kaydı:\n{chat_history_text}"}
+            ],
+            temperature=0.5
+        )
+        
+        raw_answer = response.choices[0].message.content.strip()
+        # Eğer GPT inat edip markdown "```json" koyarsa onu temizliyoruz ki kod patlamasın
+        if raw_answer.startswith("```json"):
+            raw_answer = raw_answer.replace("```json", "").replace("```", "").strip()
+        elif raw_answer.startswith("```"):
+            raw_answer = raw_answer.replace("```", "").strip()
+            
+        analiz_sonucu = json.loads(raw_answer)
+        return analiz_sonucu
+    except Exception as e:
+        logger.error(f"Analiz Hatasi: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 if __name__ == "__main__":
     import uvicorn
