@@ -36,6 +36,11 @@ class Message(BaseModel):
 class ChatRequest(BaseModel):
     messages: List[Message]
 
+# YENİ: Analiz için özel model (Hızlı notlar dahil)
+class AnalizRequest(BaseModel):
+    messages: List[Message]
+    hizli_notlar: Optional[str] = ""
+
 class VakaModel(BaseModel):
     vaka_adi: str
     ozet: str
@@ -150,7 +155,7 @@ def chat(req: ChatRequest):
 
 # --- YENİ: SEANS ANALİZİ ---
 @app.post("/seans-analizi")
-def seans_analizi(req: ChatRequest):
+def seans_analizi(req: AnalizRequest):
     try:
         # GPT'ye göndermek için geçmişi temiz bir metin haline getiriyoruz
         chat_history_text = ""
@@ -159,13 +164,15 @@ def seans_analizi(req: ChatRequest):
             kim = "Terapist (Öğrenci)" if m.role == "user" else "Danışan"
             chat_history_text += f"{kim}: {m.content}\n"
             
-        system_prompt = """Sen uzman bir klinik psikoloji süpervizörüsün. Aşağıdaki terapist-danışan görüşmesini incele.
+        system_prompt = f"""Sen uzman bir klinik psikoloji süpervizörüsün. Aşağıdaki terapist-danışan görüşmesini incele.
+        Terapistin kendi tuttuğu şu notları da dikkate al: "{req.hizli_notlar}"
+        
         Lütfen yanıtını SADECE aşağıdaki JSON formatında ver, dışına markdown veya açıklama ekleme:
-        {
+        {{
           "empati_skoru": 85,
           "terapotik_ittifak": "Terapötik ittifak değerlendirmesini buraya yaz (kısa ve profesyonel).",
           "oneri": "Terapiste klinik ve somut bir öneri yaz (kısa ve net)."
-        }"""
+        }}"""
 
         response = openai_client.chat.completions.create(
             model="gpt-5.4-nano", 

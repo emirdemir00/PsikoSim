@@ -25,6 +25,7 @@ export default function PsikoSimMaster() {
 
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analizSonucu, setAnalizSonucu] = useState<any>(null);
+  const [hizliNot, setHizliNot] = useState(""); // YENİ: Hızlı Not State
 
   const [showProfileModal, setShowProfileModal] = useState(true);
   const [userName, setUserName] = useState("");
@@ -32,6 +33,24 @@ export default function PsikoSimMaster() {
   const [userInitials, setUserInitials] = useState("");
   const [tempName, setTempName] = useState("");
   const [tempTitle, setTempTitle] = useState("");
+
+  // YENİ: LocalStorage (Hafıza) kontrolü
+  useEffect(() => {
+    const savedUser = localStorage.getItem("psikosim_user");
+    if (savedUser) {
+      if (savedUser === "skipped") {
+        setShowProfileModal(false);
+      } else {
+        try {
+          const parsed = JSON.parse(savedUser);
+          setUserName(parsed.name || "");
+          setUserTitle(parsed.title || "");
+          setUserInitials(parsed.initials || "");
+          setShowProfileModal(false);
+        } catch (e) {}
+      }
+    }
+  }, []);
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
@@ -260,6 +279,7 @@ export default function PsikoSimMaster() {
     setCurrentVaka(vaka);
     setMesajlar([]);
     setChatPopup(null);
+    setHizliNot(""); // YENİ: Notları sıfırla
     setIsTestMode(false); 
     setActivePage('chat-session');
   };
@@ -268,6 +288,7 @@ export default function PsikoSimMaster() {
     setCurrentVaka(vaka);
     setMesajlar([]);
     setChatPopup(null);
+    setHizliNot(""); // YENİ: Notları sıfırla
     setIsTestMode(true); 
     setActivePage('chat-session');
   };
@@ -282,7 +303,7 @@ export default function PsikoSimMaster() {
       const response = await fetch("https://psikosim-backend.onrender.com/seans-analizi", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: apiGecmis })
+        body: JSON.stringify({ messages: apiGecmis, hizli_notlar: hizliNot }) // YENİ: Notlar gönderiliyor
       });
       
       const data = await response.json();
@@ -300,15 +321,22 @@ export default function PsikoSimMaster() {
   };
 
   const handleProfileSave = () => {
+    let newInitials = "";
     if (tempName.trim() !== "" || tempTitle.trim() !== "") {
       setUserName(tempName);
       setUserTitle(tempTitle);
       const words = tempName.trim().split(" ").filter(w => w.length > 0);
       if (words.length >= 2) {
-         setUserInitials((words[0][0] + words[words.length-1][0]).toUpperCase());
+         newInitials = (words[0][0] + words[words.length-1][0]).toUpperCase();
+         setUserInitials(newInitials);
       } else if (words.length === 1) {
-         setUserInitials(words[0].substring(0, 2).toUpperCase());
+         newInitials = words[0].substring(0, 2).toUpperCase();
+         setUserInitials(newInitials);
       }
+      // YENİ: LocalStorage kaydı
+      localStorage.setItem("psikosim_user", JSON.stringify({ name: tempName, title: tempTitle, initials: newInitials }));
+    } else {
+      localStorage.setItem("psikosim_user", "skipped");
     }
     setShowProfileModal(false);
   };
@@ -367,7 +395,6 @@ export default function PsikoSimMaster() {
   return (
     <main className="flex h-screen bg-[#F8FAFC] text-[#1E293B] font-sans overflow-hidden antialiased relative">
       
-      {/* SAĞ ALTTA KÜÇÜK YÜKLEME BİLDİRİMİ */}
       {isLoading && (
         <div className="fixed bottom-6 right-6 bg-white border border-slate-100 p-4 rounded-2xl shadow-xl z-[100] flex items-center gap-4 animate-in slide-in-from-bottom-4">
           <div className="w-6 h-6 border-2 border-[#3E34FA] border-t-transparent rounded-full animate-spin"></div>
@@ -390,7 +417,7 @@ export default function PsikoSimMaster() {
               <input value={tempTitle} onChange={e => setTempTitle(e.target.value)} placeholder="Unvan (Örn: Klinik Psikolog)" className="w-full bg-[#F8F9FB] border border-slate-200 p-3 md:p-4 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-[#3E34FA] text-[#2B3674]" />
             </div>
             <button onClick={handleProfileSave} className="w-full py-3 md:py-4 bg-[#3E34FA] text-white rounded-xl font-bold shadow-md hover:bg-[#2B24C0] transition-all mb-3 text-sm md:text-base">Kaydet ve Başla</button>
-            <button onClick={() => setShowProfileModal(false)} className="w-full py-3 text-[#A3AED0] font-bold text-sm hover:text-slate-600 transition-all">Boş Bırak ve Devam Et</button>
+            <button onClick={() => { localStorage.setItem("psikosim_user", "skipped"); setShowProfileModal(false); }} className="w-full py-3 text-[#A3AED0] font-bold text-sm hover:text-slate-600 transition-all">Boş Bırak ve Devam Et</button>
           </div>
         </div>
       )}
@@ -502,7 +529,7 @@ export default function PsikoSimMaster() {
                   <div className="flex justify-between items-center mb-4"><h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest">EMPATİ UYUMU</h4></div>
                   <div className="w-full h-3 bg-slate-100 rounded-full mb-4 overflow-hidden"><div className="h-full bg-[#3E34FA] rounded-full transition-all duration-1000" style={{width: `${Math.min(mesajlar.length * 15, 100)}%`}}></div></div>
                </div>
-               <div className="mt-auto"><h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 px-2">HIZLI NOTLAR</h4><textarea rows={4} placeholder="Seans notlarını buraya girin..." className="w-full bg-white border border-slate-100 rounded-3xl p-5 text-sm font-medium text-slate-600 focus:outline-none focus:ring-2 focus:ring-[#3E34FA] shadow-sm resize-none"></textarea></div>
+               <div className="mt-auto"><h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 px-2">HIZLI NOTLAR</h4><textarea value={hizliNot} onChange={(e) => setHizliNot(e.target.value)} rows={4} placeholder="Seans notlarını buraya girin..." className="w-full bg-white border border-slate-100 rounded-3xl p-5 text-sm font-medium text-slate-600 focus:outline-none focus:ring-2 focus:ring-[#3E34FA] shadow-sm resize-none"></textarea></div>
             </aside>
          </div>
       ) : (
@@ -655,6 +682,8 @@ Uygulamanın kullanımından doğabilecek doğrudan veya dolaylı sonuçlardan g
                        {isAnalyzing ? (<div className="text-4xl md:text-5xl font-black text-slate-200 mb-3 animate-pulse">--</div>) : (<><div className="text-4xl md:text-5xl font-black text-[#3E34FA] mb-3 md:mb-4">%{analizSonucu?.empati_skoru || 0}</div><div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden"><div className="bg-[#3E34FA] h-full transition-all duration-1000" style={{width: `${analizSonucu?.empati_skoru || 0}%`}}></div></div></>)}
                      </div>
                      <button onClick={() => setActivePage('dashboard')} disabled={isAnalyzing} className="w-full py-3 md:py-4 bg-[#1E293B] text-white rounded-xl md:rounded-2xl font-bold text-sm shadow-md hover:bg-black transition-all disabled:opacity-50">Laboratuvara Dön</button>
+                     {/* YENİ: PDF / Yazdır Butonu */}
+                     <button onClick={() => window.print()} disabled={isAnalyzing} className="w-full py-3 md:py-4 bg-white border border-slate-200 text-[#1E293B] rounded-xl md:rounded-2xl font-bold text-sm shadow-sm hover:bg-slate-50 transition-all disabled:opacity-50 mt-4">📄 Raporu Yazdır / İndir</button>
                    </div>
                  </div>
                </div>
