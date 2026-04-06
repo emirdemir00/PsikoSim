@@ -24,8 +24,11 @@ export default function PsikoSimMaster() {
   const [isRecording, setIsRecording] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const [chatPopup, setChatPopup] = useState<string | null>(null);
-  
   const [isTestMode, setIsTestMode] = useState(false);
+
+  // YENİ: Yapay Zeka Rapor State'leri
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analizSonucu, setAnalizSonucu] = useState<any>(null);
 
   // Kullanıcı Profil State'leri
   const [showProfileModal, setShowProfileModal] = useState(true);
@@ -277,6 +280,35 @@ export default function PsikoSimMaster() {
     setActivePage('chat-session');
   };
 
+  // YENİ: DİNAMİK SEANS BİTİRME VE ANALİZ FONKSİYONU
+  const handleSeansBitir = async () => {
+    setActivePage('seans-raporu');
+    setIsAnalyzing(true); // Yükleme animasyonunu başlat
+    
+    try {
+      const apiGecmis = mesajlar.map(m => ({ role: m.role, content: m.content }));
+      
+      const response = await fetch("https://psikosim-backend.onrender.com/seans-analizi", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: apiGecmis })
+      });
+      
+      const data = await response.json();
+      setAnalizSonucu(data); // Backend'den gelen JSON'ı state'e at
+    } catch (err) {
+      console.error("Analiz hatası:", err);
+      // Hata olursa boş kalmasın diye fallback verisi
+      setAnalizSonucu({
+          empati_skoru: 0,
+          terapotik_ittifak: "Seans analiz edilirken sunucu kaynaklı bir kesinti yaşandı.",
+          oneri: "Lütfen internet bağlantınızı kontrol edip daha sonra tekrar deneyin."
+      });
+    } finally {
+      setIsAnalyzing(false); // Yükleme animasyonunu durdur
+    }
+  };
+
   const handleProfileSave = () => {
     if (tempName.trim() !== "" || tempTitle.trim() !== "") {
       setUserName(tempName);
@@ -345,6 +377,17 @@ export default function PsikoSimMaster() {
       </div>
     </header>
   );
+
+  // YÜKLEME EKRANI
+  if (isLoading && vakalar.length === 0) {
+    return (
+      <div className="h-screen w-full flex flex-col items-center justify-center bg-[#F8FAFC] p-4 text-center">
+        <div className="w-12 h-12 md:w-16 md:h-16 border-4 border-[#3E34FA] border-t-transparent rounded-full animate-spin mb-4"></div>
+        <h2 className="text-lg md:text-xl font-bold text-[#2B3674]">Psiko-Sim Hazırlanıyor</h2>
+        <p className="text-xs md:text-sm text-[#A3AED0] mt-2 font-medium italic">Sistem sunucusu uyandırılıyor, bu işlem 30-40 saniye sürebilir...</p>
+      </div>
+    );
+  }
 
   return (
     <main className="flex h-screen bg-[#F8FAFC] text-[#1E293B] font-sans overflow-hidden antialiased">
@@ -452,7 +495,8 @@ export default function PsikoSimMaster() {
                      <span className="text-lg">✨</span> Müdahaleler
                   </button>
                </nav>
-               <button onClick={() => setActivePage('seans-raporu')} className="w-full py-4 bg-[#B91C1C] text-white rounded-xl font-bold text-sm shadow-md flex justify-center items-center gap-2 hover:bg-red-800 transition-all">
+               {/* YENİ: DINAMİK SEANS BİTİR BUTONU (DESKTOP) */}
+               <button onClick={handleSeansBitir} className="w-full py-4 bg-[#B91C1C] text-white rounded-xl font-bold text-sm shadow-md flex justify-center items-center gap-2 hover:bg-red-800 transition-all">
                   ↪ Seansı Bitir
                </button>
             </aside>
@@ -466,8 +510,8 @@ export default function PsikoSimMaster() {
                      <span className="text-[9px] md:text-[10px] font-bold text-[#3E34FA] uppercase tracking-widest">{isTestMode ? "TEST" : "AKTİF SEANS"}</span>
                   </div>
                   
-                  {/* Mobilde Görünen "Seansı Bitir" Butonu */}
-                  <button onClick={() => setActivePage('seans-raporu')} className="lg:hidden px-3 py-1.5 bg-red-50 text-red-600 rounded-lg font-bold text-[10px] uppercase tracking-widest border border-red-100 shadow-sm">
+                  {/* YENİ: DINAMİK SEANS BİTİR BUTONU (MOBİL) */}
+                  <button onClick={handleSeansBitir} className="lg:hidden px-3 py-1.5 bg-red-50 text-red-600 rounded-lg font-bold text-[10px] uppercase tracking-widest border border-red-100 shadow-sm">
                      Bitir ↪
                   </button>
 
@@ -946,7 +990,7 @@ export default function PsikoSimMaster() {
                 </div>
              )}
 
-             {/* 6. SEANS SONU ANALİZ RAPORU */}
+             {/* 6. YENİ EKLENEN: DİNAMİK YAPAY ZEKA RAPORU */}
              {activePage === 'seans-raporu' && (
                <div className="p-4 md:p-12 max-w-5xl mx-auto space-y-6 md:space-y-8 animate-in zoom-in-95 duration-500">
                  <div className="bg-[#3E34FA] rounded-[24px] md:rounded-[40px] p-6 md:p-10 text-white shadow-xl relative overflow-hidden">
@@ -959,29 +1003,47 @@ export default function PsikoSimMaster() {
 
                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                    <div className="col-span-1 md:col-span-2 space-y-6">
-                     <div className="bg-white rounded-[24px] md:rounded-[32px] p-6 md:p-8 border border-slate-100 shadow-sm">
+                     <div className="bg-white rounded-[24px] md:rounded-[32px] p-6 md:p-8 border border-slate-100 shadow-sm min-h-[250px]">
                        <h3 className="text-base md:text-lg font-bold text-[#1E293B] mb-4 md:mb-6 flex items-center gap-2"><span>📈</span> Klinik Değerlendirme</h3>
-                       <div className="space-y-4 md:space-y-6 text-slate-600 text-xs md:text-sm leading-relaxed">
-                         <p><b className="text-[#3E34FA]">Terapötik İttifak:</b> Seans boyunca danışanın direnciyle başa çıkma biçimin profesyoneldi. Danışan {mesajlar.length}. mesajdan sonra daha fazla açılmaya başladı.</p>
-                         <div className="bg-slate-50 p-4 md:p-6 rounded-xl md:rounded-2xl border-l-4 border-[#3E34FA]">
-                           <p className="font-bold text-[#1E293B] mb-1 md:mb-2">Öneri:</p>
-                           "Neden böyle hissediyorsun?" yerine "Bu hissin sana ne anlatmaya çalıştığını merak ediyorum." gibi yansıtıcı soruları bir sonraki seansında %20 daha fazla kullanmayı deneyebilirsin.
+                       
+                       {isAnalyzing ? (
+                         <div className="flex flex-col items-center justify-center h-40 space-y-4">
+                            <div className="w-10 h-10 border-4 border-[#3E34FA] border-t-transparent rounded-full animate-spin"></div>
+                            <p className="text-[#3E34FA] font-bold text-sm animate-pulse">Yapay Zeka Seansı Analiz Ediyor...</p>
                          </div>
-                       </div>
+                       ) : (
+                         <div className="space-y-4 md:space-y-6 text-slate-600 text-xs md:text-sm leading-relaxed animate-in fade-in duration-500">
+                           <p><b className="text-[#3E34FA]">Terapötik İttifak:</b> {analizSonucu?.terapotik_ittifak}</p>
+                           <div className="bg-slate-50 p-4 md:p-6 rounded-xl md:rounded-2xl border-l-4 border-[#3E34FA]">
+                             <p className="font-bold text-[#1E293B] mb-1 md:mb-2">Öneri:</p>
+                             {analizSonucu?.oneri}
+                           </div>
+                         </div>
+                       )}
+
                      </div>
                    </div>
 
                    <div className="space-y-6">
-                     <div className="bg-white rounded-[24px] md:rounded-[32px] p-6 md:p-8 border border-slate-100 shadow-sm text-center">
+                     <div className="bg-white rounded-[24px] md:rounded-[32px] p-6 md:p-8 border border-slate-100 shadow-sm text-center min-h-[200px] flex flex-col justify-center">
                        <p className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 md:mb-2">EMPATİ SKORU</p>
-                       <div className="text-4xl md:text-5xl font-black text-[#3E34FA] mb-3 md:mb-4">%88</div>
-                       <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                         <div className="bg-[#3E34FA] h-full" style={{width: '88%'}}></div>
-                       </div>
+                       
+                       {isAnalyzing ? (
+                          <div className="text-4xl md:text-5xl font-black text-slate-200 mb-3 md:mb-4 animate-pulse">--</div>
+                       ) : (
+                          <>
+                            <div className="text-4xl md:text-5xl font-black text-[#3E34FA] mb-3 md:mb-4">%{analizSonucu?.empati_skoru || 0}</div>
+                            <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                              <div className="bg-[#3E34FA] h-full transition-all duration-1000" style={{width: `${analizSonucu?.empati_skoru || 0}%`}}></div>
+                            </div>
+                          </>
+                       )}
+
                      </div>
                      <button 
                        onClick={() => setActivePage('dashboard')}
-                       className="w-full py-3 md:py-4 bg-[#1E293B] text-white rounded-xl md:rounded-2xl font-bold text-sm shadow-md hover:bg-black transition-all"
+                       disabled={isAnalyzing}
+                       className="w-full py-3 md:py-4 bg-[#1E293B] text-white rounded-xl md:rounded-2xl font-bold text-sm shadow-md hover:bg-black transition-all disabled:opacity-50"
                      >
                        Laboratuvara Dön
                      </button>
