@@ -346,20 +346,20 @@ export default function PsikoSimMaster() {
     </header>
   );
 
-  // YÜKLEME EKRANI
-  if (isLoading && vakalar.length === 0) {
-    return (
-      <div className="h-screen w-full flex flex-col items-center justify-center bg-[#F8FAFC] p-4 text-center">
-        <div className="w-12 h-12 md:w-16 md:h-16 border-4 border-[#3E34FA] border-t-transparent rounded-full animate-spin mb-4"></div>
-        <h2 className="text-lg md:text-xl font-bold text-[#2B3674]">Psiko-Sim Hazırlanıyor</h2>
-        <p className="text-xs md:text-sm text-[#A3AED0] mt-2 font-medium italic">Sistem sunucusu uyandırılıyor, bu işlem 30-40 saniye sürebilir...</p>
-      </div>
-    );
-  }
-
   return (
     <main className="flex h-screen bg-[#F8FAFC] text-[#1E293B] font-sans overflow-hidden antialiased">
       
+      {/* YENİ: SAĞ ALTTA KÜÇÜK YÜKLEME BİLDİRİMİ (TOAST) */}
+      {isLoading && (
+        <div className="fixed bottom-6 right-6 bg-white border border-slate-100 p-4 rounded-2xl shadow-xl z-[100] flex items-center gap-4 animate-in slide-in-from-bottom-4">
+          <div className="w-6 h-6 border-2 border-[#3E34FA] border-t-transparent rounded-full animate-spin"></div>
+          <div>
+            <p className="text-sm font-bold text-[#1E293B]">Sistem Hazırlanıyor</p>
+            <p className="text-xs text-slate-500 font-medium">Sunucu uyandırılıyor...</p>
+          </div>
+        </div>
+      )}
+
       {/* KARŞILAMA MODALI */}
       {showProfileModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0F172A]/40 backdrop-blur-sm p-4">
@@ -382,6 +382,7 @@ export default function PsikoSimMaster() {
       {activePage === 'chat-session' ? (
          <div className="flex w-full h-full bg-white relative">
             
+            {/* CHAT İÇİ POP-UP MENÜLERİ */}
             {chatPopup && (
                 <div className="absolute inset-0 bg-white/95 z-40 flex flex-col p-6 md:p-12 animate-in fade-in">
                     <div className="flex justify-between items-center mb-8 border-b pb-4">
@@ -664,7 +665,7 @@ export default function PsikoSimMaster() {
                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                      {[
                        { t: 'SİSTEM DURUMU', v: 'Çevrimiçi', d: 'Bağlantı Hazır', icon: '🟢', c: 'text-emerald-500', bc: 'border-emerald-400' },
-                       { t: 'KAYITLI VAKA', v: `${filteredVakalar.length} Danışan`, d: 'Seans Bekliyor', icon: '👤', c: 'text-[#3E34FA]', bc: 'border-[#3E34FA]' },
+                       { t: 'KAYITLI VAKA', v: isLoading ? 'Yükleniyor...' : `${filteredVakalar.length} Danışan`, d: isLoading ? 'Senkronize ediliyor' : 'Seans Bekliyor', icon: '👤', c: 'text-[#3E34FA]', bc: 'border-[#3E34FA]' },
                        { t: 'KLİNİK ODA', v: 'Müsait', d: 'Görüşmeye Hazır', icon: '🚪', c: 'text-slate-400', bc: 'border-[#3E34FA]' }
                      ].map((card, i) => (
                        <div key={i} className={`bg-white p-5 md:p-6 rounded-[20px] md:rounded-[24px] shadow-sm border-l-4 ${card.bc}`}>
@@ -723,7 +724,9 @@ export default function PsikoSimMaster() {
                     <div className="w-24 h-24 md:w-28 md:h-28 bg-slate-200 rounded-full mb-4 overflow-hidden border-4 border-white shadow-lg">
                        <img src={`https://api.dicebear.com/7.x/notionists/svg?seed=${filteredVakalar[0]?.vaka_adi || 'Selin'}&backgroundColor=b6e3f4`} alt="Danışan" className="w-full h-full object-cover" />
                     </div>
-                    <h3 className="text-xl md:text-2xl font-bold text-[#2B3674] line-clamp-1">{filteredVakalar[0]?.vaka_adi || "Vaka Bulunamadı"}</h3>
+                    <h3 className="text-xl md:text-2xl font-bold text-[#2B3674] line-clamp-1">
+                      {isLoading ? "Yükleniyor..." : (filteredVakalar[0]?.vaka_adi || "Vaka Bulunamadı")}
+                    </h3>
                     <p className="text-xs md:text-sm text-[#A3AED0] font-medium mb-6 md:mb-8">Bekleyen Simülasyon</p>
                     
                     <button onClick={() => {if(filteredVakalar[0]) startSession(filteredVakalar[0])}} className="w-full py-3 md:py-4 border-2 border-[#E9E3FF] text-[#3E34FA] rounded-xl md:rounded-2xl font-bold text-sm hover:bg-[#F4F7FE] transition-all flex justify-center items-center gap-2">Dosyayı İncele ➔</button>
@@ -754,10 +757,16 @@ export default function PsikoSimMaster() {
                               </div>
                            </div>
                         ))}
-                        {filteredVakalar.length === 0 && (
+                        {filteredVakalar.length === 0 && !isLoading && (
                             <div className="col-span-full p-10 text-center border-2 border-dashed border-slate-200 rounded-3xl">
                                 <p className="text-slate-400 font-bold">Aradığınız kriterde veya sistemde kayıtlı vaka bulunamadı.</p>
                                 <button onClick={() => setActivePage('admin')} className="mt-4 text-[#3E34FA] font-bold text-sm hover:underline">Yetkili Panelinden Vaka Ekle</button>
+                            </div>
+                        )}
+                        {isLoading && (
+                            <div className="col-span-full p-10 text-center border-2 border-dashed border-indigo-100 bg-indigo-50/50 rounded-3xl flex flex-col items-center justify-center">
+                                <div className="w-8 h-8 border-4 border-[#3E34FA] border-t-transparent rounded-full animate-spin mb-4"></div>
+                                <p className="text-[#3E34FA] font-bold">Vakalar sunucudan çekiliyor, lütfen bekleyin...</p>
                             </div>
                         )}
                      </div>
@@ -927,7 +936,8 @@ export default function PsikoSimMaster() {
                                         </div>
                                      </div>
                                   ))}
-                                  {vakalar.length === 0 && <p className="text-sm text-slate-400 italic font-bold">Sistemde hiç vaka bulunmuyor.</p>}
+                                  {vakalar.length === 0 && !isLoading && <p className="text-sm text-slate-400 italic font-bold">Sistemde hiç vaka bulunmuyor.</p>}
+                                  {isLoading && <p className="text-sm text-[#3E34FA] italic font-bold animate-pulse">Vakalar sunucudan yükleniyor...</p>}
                                </div>
                             </div>
                          </div>
