@@ -5,6 +5,7 @@ export default function PsikoSimMaster() {
   const [activePage, setActivePage] = useState('dashboard');
   const [vakalar, setVakalar] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isLoading, setIsLoading] = useState(true); // YENİ: Yükleme ekranı için state
   
   // Yetkili Paneli State'leri
   const [isAdminAuth, setIsAdminAuth] = useState(false);
@@ -34,6 +35,7 @@ export default function PsikoSimMaster() {
 
   // Backend'den vakaları çekme
   const vakaYukle = async () => {
+    setIsLoading(true); // YENİ: İstek atarken yüklemeyi başlat
     try {
       const timestamp = new Date().getTime();
       const res = await fetch(`https://psikosim-backend.onrender.com/vakalar?t=${timestamp}`, { 
@@ -48,6 +50,8 @@ export default function PsikoSimMaster() {
       }
     } catch (err) { 
       console.error("Bağlantı koptu:", err); 
+    } finally {
+      setIsLoading(false); // YENİ: Başarılı veya başarısız olsa da yüklemeyi bitir
     }
   };
 
@@ -332,6 +336,17 @@ export default function PsikoSimMaster() {
       </div>
     </header>
   );
+
+  // YENİ: YÜKLEME EKRANI (Render uyandırma süreci)
+  if (isLoading && vakalar.length === 0) {
+    return (
+      <div className="h-screen w-full flex flex-col items-center justify-center bg-[#F8FAFC]">
+        <div className="w-16 h-16 border-4 border-[#3E34FA] border-t-transparent rounded-full animate-spin mb-4"></div>
+        <h2 className="text-xl font-bold text-[#2B3674]">Psiko-Sim Hazırlanıyor</h2>
+        <p className="text-sm text-[#A3AED0] mt-2 font-medium italic">Sistem sunucusu uyandırılıyor, bu işlem 30-40 saniye sürebilir...</p>
+      </div>
+    );
+  }
 
   return (
     <main className="flex h-screen bg-[#F8FAFC] text-[#1E293B] font-sans overflow-hidden antialiased">
