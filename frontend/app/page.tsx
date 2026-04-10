@@ -403,8 +403,17 @@ export default function PsikoSimMaster() {
     return `${m < 10 ? '0' + m : m}:${s < 10 ? '0' + s : s}`;
   };
 
-  const handleAdminLogin = () => {
-    if (adminPassword.trim().toLowerCase() === "nisanyagmuru") {
+ const handleAdminLogin = () => {
+    // Next.js için NEXT_PUBLIC_ ön eki şarttır
+    const correctPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
+
+    if (!correctPassword) {
+      console.error("HATA: .env dosyasında şifre tanımlanmamış!");
+      alert("Sistem hatası: Şifre yapılandırması bulunamadı.");
+      return;
+    }
+
+    if (adminPassword.trim() === correctPassword) {
       setIsAdminAuth(true);
       setAdminPassword("");
     } else {
