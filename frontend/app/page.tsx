@@ -404,7 +404,7 @@ export default function PsikoSimMaster() {
   };
 
  const handleAdminLogin = () => {
-    // Next.js için NEXT_PUBLIC_ ön eki şarttır
+    // Next.js için NEXT_PUBLIC_ ön eki şarttı
     const correctPassword = process.env.NEXT_PUBLIC_ADMIN_PASSWORD;
 
     if (!correctPassword) {
